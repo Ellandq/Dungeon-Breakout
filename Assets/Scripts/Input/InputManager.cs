@@ -35,5 +35,10 @@ namespace Input
             (0, "Base"),
             (1, "Alternative"),
         };
+
+        public void test()
+        {
+            
+        }
     }
 }

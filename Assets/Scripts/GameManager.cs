@@ -21,10 +21,10 @@ public class GameManager : ManagerBase<GameManager>
 
     private void Update()
     {
-    #if UNITY_EDITOR
-            currentState = _currentState.Name;
-            stateStatus = _currentState.Status;
-    #endif
+        #if UNITY_EDITOR
+                currentState = _currentState.Name;
+                stateStatus = _currentState.Status;
+        #endif
         _currentState?.Update();
     }
 
