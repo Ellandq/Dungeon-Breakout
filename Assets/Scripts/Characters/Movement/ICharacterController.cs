@@ -4,7 +4,6 @@
     {
         void Initialize();
         void UpdateMovement();
-        void Crouch();
         void EnableMovement();
         void DisableMovement();
     }

@@ -36,9 +36,14 @@ namespace Input
             (1, "Alternative"),
         };
 
-        public void test()
+        public static KeyboardInput getKeyboardInputHandle()
         {
-            
+            return Instance.keyboardInput;
+        }
+        
+        public static MouseInput getMouseInputHandle()
+        {
+            return Instance.mouseInput;
         }
     }
 }
