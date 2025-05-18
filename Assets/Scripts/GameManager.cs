@@ -16,7 +16,7 @@ public class GameManager : ManagerBase<GameManager>
     private void Start()
     {
         // TODO Rework this to use main menu as the default or work based on the given scene
-        // ChangeState(new PlayingState());
+        ChangeState(new PlayState());
     }
 
     private void Update()

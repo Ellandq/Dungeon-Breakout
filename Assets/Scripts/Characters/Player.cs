@@ -1,4 +1,5 @@
-﻿using Characters.Movement;
+﻿using System;
+using Characters.Movement;
 using UnityEngine;
 
 namespace Characters
@@ -11,6 +12,11 @@ namespace Characters
         private void Start()
         {
             controller.Initialize();
+        }
+
+        private void Update()
+        {
+            controller.UpdateMovement();
         }
     }
 }

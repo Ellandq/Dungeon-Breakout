@@ -1,6 +1,7 @@
 ﻿using System;
 using Input;
 using UnityEngine;
+using Utils;
 
 namespace Characters.Movement.Player
 {
@@ -8,13 +9,17 @@ namespace Characters.Movement.Player
     {
         public override void Initialize()
         {
+            base.Initialize();
             SubscribeToInputEvents();
             mover.IsMovementEnabled = true;
         }
 
         public override void UpdateMovement()
         {
+            var speed = movementSettings.GetSpeed(movementType);
+            var directions = Vector2Utils.ConvertFromDirections(moveDirections);
             
+            mover.Move(speed * directions);
         }
         
         private void SubscribeToInputEvents()
@@ -29,7 +34,7 @@ namespace Characters.Movement.Player
             
             // Sneaking and Sprinting
             inputHandle.AddListenerOnInputAction(state => ChangeMovementType(MovementType.Sneaking, state), "Crouch");
-            inputHandle.AddListenerOnInputAction(state => ChangeMovementType(MovementType.Sneaking, state), "Sprint");
+            inputHandle.AddListenerOnInputAction(state => ChangeMovementType(MovementType.Sprinting, state), "Sprint");
         }
         
         private void ChangeMoveDirection(MoveDirection direction, ButtonState buttonState)
