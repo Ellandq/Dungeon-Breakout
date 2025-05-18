@@ -7,7 +7,7 @@ namespace Characters.Movement
         [Header("Character Components")]
         [SerializeField] private Rigidbody2D rigidbody;
         
-        private const float GlobalSpeedMultiplier = 300f;
+        private const float GlobalSpeedMultiplier = 400f;
         
         public bool IsMovementEnabled { get; set; }
         

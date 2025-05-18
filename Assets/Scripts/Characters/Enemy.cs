@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Characters
 {
-    public class Enemy
+    public class Enemy : MonoBehaviour
     {
         [Header("Object References")]
         [SerializeField] private CustomCharacterController controller;

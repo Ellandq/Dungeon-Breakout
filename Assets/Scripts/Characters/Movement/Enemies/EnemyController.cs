@@ -1,44 +1,40 @@
-﻿using System.Collections.Generic;
-using Utils;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
-using Characters;
 
 namespace Characters.Movement.Enemies
 {
     public class EnemyController : CustomCharacterController
     {
-        [Header("Player Reference")]
-        private Characters.Player player;
+        [Header("Patrol Info")]
+        [SerializeField] private List<Vector3> patrolPoints;
+        [SerializeField] private float reachThreshold = 0.1f;
+        private int _currentPatrolIndex;
 
         [Header("Movement Info")] 
-        [SerializeField] private List<Vector3> patrolPositions;
-        [SerializeField] private int currentPatrolIndex;
         [SerializeField] private float virtualRotation;
-        [SerializeField] private bool isChasing;
-        
+
         public override void Initialize()
         {
             base.Initialize();
-            player = PlayerManager.GetPlayer();
             mover.IsMovementEnabled = true;
-        }
-        
-        public override void UpdateMovement()
-        {
-            var speed = movementSettings.GetSpeed(movementType);
-            var directions = Vector2Utils.ConvertFromDirections(moveDirections);
-            
-            mover.Move(speed * directions);
-        }
-        
-        private void ChangeMoveDirection(MoveDirection direction)
-        {
-            
+            _currentPatrolIndex = 0;
         }
 
-        private void ChangeMovementType(MovementType type)
+        public override void UpdateMovement()
         {
-            
+            if (patrolPoints == null || patrolPoints.Count == 0) return;
+
+            var target = patrolPoints[_currentPatrolIndex];
+            var direction = (target - transform.position).normalized;
+
+            mover.Move(direction);
+
+            if (Vector2.Distance(transform.position, target) < reachThreshold)
+            {
+                Debug.Log(_currentPatrolIndex);
+                _currentPatrolIndex = (_currentPatrolIndex + 1) % patrolPoints.Count;
+            }
         }
     }
 }
