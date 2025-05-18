@@ -252,8 +252,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
+  m_Mass: 50
+  m_LinearDamping: 10
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -263,7 +263,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
@@ -1315,9 +1315,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mover: {fileID: 1696109199}
   movementSettings:
-    defaultSpeed: 1
-    runningSpeed: 2
-    sneakingSpeed: 0.5
+    defaultSpeed: 1.5
+    runningSpeed: 2.5
+    sneakingSpeed: 1
   movementType: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

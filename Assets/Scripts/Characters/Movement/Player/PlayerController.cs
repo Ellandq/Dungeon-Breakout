@@ -1,6 +1,4 @@
-﻿using System;
-using Input;
-using UnityEngine;
+﻿using Input;
 using Utils;
 
 namespace Characters.Movement.Player
