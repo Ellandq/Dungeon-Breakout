@@ -1,5 +1,6 @@
 ﻿using System;
 using Input;
+using UnityEngine;
 
 namespace Characters.Movement.Player
 {
@@ -7,6 +8,7 @@ namespace Characters.Movement.Player
     {
         public override void Initialize()
         {
+            SubscribeToInputEvents();
             mover.IsMovementEnabled = true;
         }
 
@@ -19,17 +21,25 @@ namespace Characters.Movement.Player
         {
             var inputHandle = InputManager.getKeyboardInputHandle();
             
+            // Basic movement
             inputHandle.AddListenerOnInputAction(state => ChangeMoveDirection(MoveDirection.Up, state), "Move Forwards");
             inputHandle.AddListenerOnInputAction(state => ChangeMoveDirection(MoveDirection.Down, state), "Move Backwards");
             inputHandle.AddListenerOnInputAction(state => ChangeMoveDirection(MoveDirection.Left, state), "Move Left");
             inputHandle.AddListenerOnInputAction(state => ChangeMoveDirection(MoveDirection.Right, state), "Move Right");
             
-            // TODO add input for sprinting and sneaking
+            // Sneaking and Sprinting
+            inputHandle.AddListenerOnInputAction(state => ChangeMovementType(MovementType.Sneaking, state), "Crouch");
+            inputHandle.AddListenerOnInputAction(state => ChangeMovementType(MovementType.Sneaking, state), "Sprint");
         }
         
         private void ChangeMoveDirection(MoveDirection direction, ButtonState buttonState)
         {
-            MoveDirections[direction] = buttonState == ButtonState.Down;
+            moveDirections[direction] = buttonState == ButtonState.Down;
+        }
+
+        private void ChangeMovementType(MovementType type, ButtonState buttonState)
+        {
+            movementType = buttonState == ButtonState.Up ? MovementType.Walking : type;
         }
     }
 }

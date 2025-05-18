@@ -9,11 +9,13 @@ namespace Characters.Movement
         [SerializeField] protected CharacterMover mover;
         
         [Header("Movement Info")]
-        protected Dictionary<MoveDirection, bool> MoveDirections;
+        protected Dictionary<MoveDirection, bool> moveDirections;
+        [SerializeField] protected MovementSettings movementSettings;
+        [SerializeField] protected MovementType movementType;
         
         public virtual void Initialize()
         {
-            MoveDirections = new Dictionary<MoveDirection, bool>{
+            moveDirections = new Dictionary<MoveDirection, bool>{
                 { MoveDirection.Up, false },
                 { MoveDirection.Down, false },
                 { MoveDirection.Left, false },
