@@ -11888,7 +11888,7 @@ Transform:
   m_GameObject: {fileID: 347757616}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7, y: 11, z: 0}
+  m_LocalPosition: {x: 6.01, y: 11, z: 0}
   m_LocalScale: {x: 1.6, y: 1.6, z: 1.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13284,13 +13284,20 @@ MonoBehaviour:
   movementType: 0
   visionCone: {fileID: 1960032020}
   player: {fileID: 80042333}
-  enemyState: 0
+  currentState: 0
+  originRotation: 0
   reachThreshold: 0.1
   patrolPath:
     patrolPoints:
-    - {x: 0, y: 0, z: 0}
+    - {x: 7, y: 11, z: 0}
+    - {x: 2, y: 5, z: 0}
+    - {x: 17, y: -8, z: 0}
+    - {x: 16, y: 10, z: 0}
     patrolPointsWaitingTime:
     - 0
+    - 2
+    - 0
+    - 2
     reverseOnFinish: 0
   virtualRotation: 0
   rotationSpeed: 5
