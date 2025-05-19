@@ -43,8 +43,17 @@ namespace Characters
                 var angle = startAngle + angleStep * i;
                 var dir = DirFromAngle(angle);
                 var hit = Physics2D.Raycast(transform.position, dir, visionDistance, obstacleMask);
+                Vector2 endpoint;
 
-                var endpoint = hit ? hit.point : (Vector2)transform.position + dir * visionDistance;
+                if (hit.collider)
+                {
+                    endpoint = hit.point;
+                }
+                else
+                {
+                    endpoint = (Vector2)transform.position + dir * visionDistance;
+                }
+
                 worldPoints.Add(endpoint);
 
                 var localVertex = transform.InverseTransformPoint(endpoint);
