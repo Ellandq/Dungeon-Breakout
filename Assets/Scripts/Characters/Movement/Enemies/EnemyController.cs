@@ -15,6 +15,7 @@ namespace Characters.Movement.Enemies
 
         [Header("Movement Info")] 
         [SerializeField] private float virtualRotation;
+        [SerializeField] private float rotationSpeed = 5f;
         private List<Vector3> _currentPath;
         private int _pathIndex;
         
@@ -31,13 +32,14 @@ namespace Characters.Movement.Enemies
 
         public override void UpdateMovement()
         {
-            visionCone.UpdateVisionCone(virtualRotation);
             if (_currentPath == null) return;
             if (_currentPath.Count != 0)
             {
                 var target = _currentPath[_pathIndex];
                 var direction = (target - transform.position).normalized;
                 mover.Move(direction * movementSettings.GetSpeed(movementType));
+                SmoothRotateTowards(direction);
+                visionCone.UpdateVisionCone(virtualRotation);
                 if (!(Vector3.Distance(transform.position, target) < reachThreshold)) return;
             }
 
@@ -88,6 +90,21 @@ namespace Characters.Movement.Enemies
             {
                 _currentPath = null;
             }
+        }
+        
+        private void SmoothRotateTowards(Vector3 direction)
+        {
+            if (direction == Vector3.zero)
+                return;
+
+            var currentRot = Quaternion.Euler(0, 0, virtualRotation);
+
+            var targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            var targetRot = Quaternion.Euler(0, 0, targetAngle);
+
+            var smoothRot = Quaternion.Lerp(currentRot, targetRot, rotationSpeed * Time.deltaTime);
+
+            virtualRotation = smoothRot.eulerAngles.z;
         }
     }
 }
