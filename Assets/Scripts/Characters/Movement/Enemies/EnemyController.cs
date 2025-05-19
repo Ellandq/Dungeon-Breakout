@@ -1,87 +1,167 @@
-﻿using Characters.Pathfinding;
+﻿using System;
+using System.Collections;
+using Characters.Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Characters.Movement.Enemies
 {
     public class EnemyController : CustomCharacterController
     {
-        [Header("Patrol Info")]
-        [SerializeField] private List<Vector3> patrolPoints;
-        [SerializeField] private float reachThreshold = 0.1f;
-        [SerializeField] private int currentPatrolIndex;
-        [SerializeField] private bool reverseOnLoop;
-        private bool _reverse;
-
+        [Header("Object References")]
+        [SerializeField] private VisionCone visionCone;
+        [SerializeField] private Characters.Player player;
+        
+        [Header("Enemy Info")] 
+        [SerializeField] private EnemyState currentState;
+        [SerializeField] private float originRotation;
+        private Vector3 _originPosition;
+        private bool _canSeePlayer;
+        
         [Header("Movement Info")] 
+        [SerializeField] private float reachThreshold = 0.1f;
+        [SerializeField] private PatrolPath patrolPath;
         [SerializeField] private float virtualRotation;
         [SerializeField] private float rotationSpeed = 5f;
         private List<Vector3> _currentPath;
         private int _pathIndex;
+        private bool _isRefreshingPath;
         
-        [Header("Object References")]
-        [SerializeField] private VisionCone visionCone;
-
         public override void Initialize()
         {
             base.Initialize();
-            mover.IsMovementEnabled = true;
-            currentPatrolIndex = 0;
-            SetNewPath();
+            _originPosition = transform.parent.position;
+            visionCone.Initialize(PlayerFound, PlayerLost);
+
+            ChangeState(EnemyState.Patrolling);
         }
 
         public override void UpdateMovement()
         {
-            if (_currentPath == null) return;
-            if (_currentPath.Count != 0)
+            if (currentState is EnemyState.Stationary or EnemyState.LookingAround) return;
+            if (_currentPath == null || _currentPath.Count == 0)
             {
-                var target = _currentPath[_pathIndex];
-                var direction = (target - transform.position).normalized;
-                mover.Move(direction * movementSettings.GetSpeed(movementType));
-                SmoothRotateTowards(direction);
-                visionCone.UpdateVisionCone(virtualRotation);
-                if (!(Vector3.Distance(transform.position, target) < reachThreshold)) return;
+                Debug.LogWarning("The path is null or empty");
+                return;
             }
-
-            _pathIndex++;
-
-            if (_pathIndex < _currentPath.Count) return;
-            AdvancePatrolIndex();
-            SetNewPath();
+            
+            var target = _currentPath[_pathIndex];
+            var direction = (target - transform.position).normalized;
+            
+            SmoothRotateTowards(direction);
+            mover.Move(direction * movementSettings.GetSpeed(movementType));
+            CheckNextMove();
         }
 
-        private void AdvancePatrolIndex()
+        private void CheckNextMove()
         {
-            if (reverseOnLoop)
+            var target = _currentPath[_pathIndex];
+            if (!(Vector3.Distance(transform.position, target) < reachThreshold)) return;
+            
+            _pathIndex++;
+            if (_pathIndex < _currentPath.Count) return;
+            
+            switch (currentState)
             {
-                if (_reverse)
-                {
-                    currentPatrolIndex--;
-                    if (currentPatrolIndex >= 0) return;
-                    currentPatrolIndex = 1;
-                    _reverse = false;
-                }
-                else
-                {
-                    currentPatrolIndex++;
-                    if (currentPatrolIndex < patrolPoints.Count) return;
-                    currentPatrolIndex = patrolPoints.Count - 2;
-                    _reverse = true;
-                }
-            }
-            else
-            {
-                currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
+                case EnemyState.Patrolling:
+                    var waitTime = patrolPath.GetWaitTime();
+                    if (waitTime != 0f) ChangeState(EnemyState.LookingAround);
+                    else
+                    {
+                        patrolPath.MoveNext();
+                        SetNewPath();
+                    }
+                    break;
+                case EnemyState.Chase:
+                    StopCoroutine(RefreshPathToPlayerTimer());
+                    RefreshPathToPlayer();
+                    break;
+                case EnemyState.Searching:
+                    ChangeState(EnemyState.LookingAround);
+                    break;
             }
         }
+
+        private void LateUpdate()
+        {
+            visionCone.UpdateVisionCone(virtualRotation);
+        }
+
+        private void ChangeState(EnemyState newState)
+        {
+            do
+            {
+                currentState = newState;
+                switch (currentState)
+                {
+                    case EnemyState.Stationary:
+                        virtualRotation = originRotation;
+                        mover.IsMovementEnabled = false;
+                        break;
+                    
+                    case EnemyState.Patrolling:
+                        if (patrolPath.HasPoints())
+                        {
+                            movementType = MovementType.Walking;
+                            mover.IsMovementEnabled = true;
+                            SetNewPath();
+                        }
+                        else
+                        {
+                            newState = EnemyState.Stationary;
+                            continue;
+                        }
+                        break;
+                    
+                    case EnemyState.Chase:
+                        movementType = MovementType.Sprinting;
+                        mover.IsMovementEnabled = true;
+                        StopCoroutine(LookAroundAndResumePatrol());
+                        RefreshPathToPlayer();
+                        break;
+
+                    
+                    case EnemyState.Searching:
+                        movementType = MovementType.Sprinting;
+                        mover.IsMovementEnabled = true;
+                        break;
+                    
+                    case EnemyState.LookingAround:
+                        mover.IsMovementEnabled = false;
+                        StartCoroutine(LookAroundAndResumePatrol());
+                        break;
+                    
+                    default:
+                        return;
+                }
+                break;
+            } while (true);
+        }
+
+        #region Path Setting
 
         private void SetNewPath()
         {
             var startCell = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), 0);
-            var targetCell = new Vector3Int(Mathf.FloorToInt(patrolPoints[currentPatrolIndex].x), Mathf.FloorToInt(patrolPoints[currentPatrolIndex].y), 0);;
+            var targetCell = patrolPath.GetCurrentConvertedPosition();
             
-            _currentPath = PathfindingManager.Instance.FindPath(startCell, targetCell);
+            SetPath(startCell, targetCell);
+        }
+        
+        private void SetNewPathToPlayer()
+        {
+            var playerPos = player.transform.position;
+            var startCell = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), 0);
+            var targetCell = new Vector3Int(Mathf.FloorToInt(playerPos.x), Mathf.FloorToInt(playerPos.y), 0);
 
+            SetPath(startCell, targetCell);
+        }
+
+        private void SetPath(Vector3Int startCell, Vector3Int targetCell)
+        {
+            _currentPath = PathfindingManager.Instance.FindPath(startCell, targetCell);
+            
             if (_currentPath != null)
             {
                 _pathIndex = 0;
@@ -91,7 +171,28 @@ namespace Characters.Movement.Enemies
                 _currentPath = null;
             }
         }
-        
+
+        #endregion
+
+        #region Player Detection
+
+        private void PlayerFound()
+        {
+            _canSeePlayer = true;
+            ChangeState(EnemyState.Chase);
+        }
+
+        private void PlayerLost()
+        {
+            Debug.Log("Hi");
+            _canSeePlayer = false;
+            ChangeState(EnemyState.Searching);
+        }
+
+        #endregion
+
+        #region Utils
+
         private void SmoothRotateTowards(Vector3 direction)
         {
             if (direction == Vector3.zero)
@@ -106,5 +207,59 @@ namespace Characters.Movement.Enemies
 
             virtualRotation = smoothRot.eulerAngles.z;
         }
+
+        private void RefreshPathToPlayer()
+        {
+            if (!_canSeePlayer || _isRefreshingPath) return;
+
+            SetNewPathToPlayer();
+            StartCoroutine(RefreshPathToPlayerTimer());
+        }
+        
+        #endregion
+
+        #region Enumerators
+
+        private IEnumerator RefreshPathToPlayerTimer()
+        {
+            _isRefreshingPath = true;
+            yield return new WaitForSeconds(0.2f);
+            _isRefreshingPath = false;
+            RefreshPathToPlayer();
+        }
+        
+        private IEnumerator LookAroundAndResumePatrol(float lookTime = 3f)
+        {
+            const float rotateDuration = 0.4f;
+            var elapsedTime = 0f;
+
+            var currentAngle = virtualRotation;
+
+            while (elapsedTime < lookTime)
+            {
+                var targetAngle = Random.Range(0f, 360f);
+                var rotateTime = 0f;
+
+                while (rotateTime < rotateDuration)
+                {
+                    rotateTime += Time.deltaTime;
+                    elapsedTime += Time.deltaTime;
+
+                    virtualRotation = Mathf.LerpAngle(currentAngle, targetAngle, rotateTime / rotateDuration);
+                    visionCone.UpdateVisionCone(virtualRotation);
+
+                    yield return null;
+
+                    if (elapsedTime >= lookTime)
+                        break;
+                }
+
+                currentAngle = targetAngle;
+            }
+
+            ChangeState(EnemyState.Patrolling);
+        }
+
+        #endregion
     }
 }

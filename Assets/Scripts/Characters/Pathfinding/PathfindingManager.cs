@@ -134,9 +134,12 @@ namespace Characters.Pathfinding
                     if (checkX < 0 || checkX >= _width || checkY < 0 || checkY >= _height) continue;
                     if (Mathf.Abs(x) == 1 && Mathf.Abs(y) == 1)
                     {
-                        if (!_walkableGrid[node.x + x, node.y] || !_walkableGrid[node.x, node.y + y])
+                        if (!IsValidGridIndex(node.x + x, node.y) || !_walkableGrid[node.x + x, node.y])
+                            continue;
+                        if (!IsValidGridIndex(node.x, node.y + y) || !_walkableGrid[node.x, node.y + y])
                             continue;
                     }
+
 
                     neighbors.Add(grid[checkX, checkY]);
                 }
@@ -145,7 +148,7 @@ namespace Characters.Pathfinding
             return neighbors;
         }
 
-        private int GetDistance(Node a, Node b)
+        private static int GetDistance(Node a, Node b)
         {
             var dstX = Mathf.Abs(a.x - b.x);
             var dstY = Mathf.Abs(a.y - b.y);
@@ -194,21 +197,10 @@ namespace Characters.Pathfinding
 
             return true;
         }
-
         
         private bool IsValidGridIndex(int x, int y)
         {
             return x >= 0 && x < _width && y >= 0 && y < _height;
-        }
-        
-        public bool IsWalkable(int x, int y)
-        {
-            return _walkableGrid[x, y];
-        }
-
-        public static Tilemap GetTileMap()
-        {
-            return Instance.tileMap;
         }
     }
 }

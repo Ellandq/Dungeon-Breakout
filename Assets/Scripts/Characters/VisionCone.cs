@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Characters
@@ -12,12 +14,16 @@ namespace Characters
         [SerializeField] private int rayCount = 50;
         [SerializeField] private LayerMask obstacleMask;
         [SerializeField] private LayerMask targetMask;
+        private float _currentRotation;
+        private Action _onPlayerFound;
+        private Action _onPlayerLost;
+        private bool _canSeePlayer;
 
         [Header("Object References")]
         [SerializeField] private MeshFilter meshFilter;
         private Mesh _visionMesh;
 
-        private void Awake()
+        public void Initialize(Action onPlayerFound, Action onPlayerLost)
         {
             _visionMesh = new Mesh
             {
@@ -27,11 +33,14 @@ namespace Characters
             var meshRenderer = GetComponent<MeshRenderer>();
             meshRenderer.sortingLayerName = "Midground";
             meshRenderer.sortingOrder = 1;
+            _onPlayerFound = onPlayerFound;
+            _onPlayerLost = onPlayerLost;
         }
 
         public void UpdateVisionCone(float rotation)
         {
-            var startAngle = rotation - visionAngle / 2f;
+            _currentRotation = rotation;
+            var startAngle = _currentRotation - visionAngle / 2f;
             var angleStep = visionAngle / rayCount;
 
             var vertices = new List<Vector3> { Vector3.zero };
@@ -84,21 +93,26 @@ namespace Characters
         private void DetectTargets(List<Vector2> coneEdges)
         {
             var targets = Physics2D.OverlapCircleAll(transform.position, visionDistance, targetMask);
+            var playerIsVisible = (from target in targets
+                let dirToTarget = ((Vector2)target.transform.position - (Vector2)transform.position).normalized
+                let forward = DirFromAngle(_currentRotation)
+                let angleToTarget = Vector2.Angle(forward, dirToTarget)
+                where angleToTarget < visionAngle / 2f
+                let dist = Vector2.Distance(transform.position, target.transform.position)
+                select Physics2D.Raycast(transform.position, dirToTarget, dist, obstacleMask)).Any(hit => !hit);
 
-            foreach (var target in targets)
+            switch (playerIsVisible)
             {
-                var dirToTarget = ((Vector2)target.transform.position - (Vector2)transform.position).normalized;
-                var angleToTarget = Vector2.Angle(transform.up, dirToTarget);
-
-                if (!(angleToTarget < visionAngle / 2f)) continue;
-
-                var dist = Vector2.Distance(transform.position, target.transform.position);
-                var hit = Physics2D.Raycast(transform.position, dirToTarget, dist, obstacleMask);
-                if (!hit)
-                {
-                    Debug.Log($"Target {target.name} is visible!");
-                }
+                case true when !_canSeePlayer:
+                    _onPlayerFound?.Invoke();
+                    _canSeePlayer = true;
+                    break;
+                case false when _canSeePlayer:
+                    _onPlayerLost?.Invoke();
+                    _canSeePlayer = false;
+                    break;
             }
         }
+
     }
 }
