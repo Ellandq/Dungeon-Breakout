@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace Characters.Pathfinding
@@ -13,13 +12,17 @@ namespace Characters.Pathfinding
         [SerializeField] private TileBase[] obstacleTiles;
         private int _width, _height;
         private bool[,] _walkableGrid;
+        private int _originX, _originY;
         
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
             var bounds = tileMap.cellBounds;
             _width = bounds.size.x;
             _height = bounds.size.y;
             _walkableGrid = new bool[_width, _height];
+            _originX = tileMap.cellBounds.x;
+            _originY = tileMap.cellBounds.y;
 
             for (var x = 0; x < _width; x++)
             {
@@ -28,12 +31,12 @@ namespace Characters.Pathfinding
                     var tilePos = new Vector3Int(bounds.x + x, bounds.y + y, 0);
                     var tile = tileMap.GetTile(tilePos);
                     
-                    _walkableGrid[x, y] = tile == null || !obstacleTiles.Contains(tile);
+                    _walkableGrid[x, y] = IsTileClear(x, y);
                 }
             }
         }
         
-        public List<Vector3Int> FindPath(Vector3Int start, Vector3Int target)
+        public List<Vector3> FindPath(Vector3Int start, Vector3Int target)
         {
             var openSet = new List<Node>();
             var closedSet = new HashSet<Node>();
@@ -48,8 +51,17 @@ namespace Characters.Pathfinding
                 }
             }
 
-            var startNode = nodeGrid[start.x, start.y];
-            var targetNode = nodeGrid[target.x, target.y];
+            var startX = start.x - _originX;
+            var startY = start.y - _originY;
+            var targetX = target.x - _originX;
+            var targetY = target.y - _originY;
+            
+            if (!IsValidGridIndex(startX, startY) || !IsValidGridIndex(targetX, targetY))
+                return null;
+
+            var startNode = nodeGrid[startX, startY];
+            var targetNode = nodeGrid[targetX, targetY];
+
 
             openSet.Add(startNode);
 
@@ -67,7 +79,8 @@ namespace Characters.Pathfinding
 
                 if (current == targetNode)
                 {
-                    return RetracePath(startNode, targetNode);
+                    var cellPath = RetracePath(startNode, targetNode);
+                    return ConvertPathToWorld(cellPath);
                 }
 
                 foreach (var neighbor in GetNeighbors(current, nodeGrid))
@@ -132,7 +145,6 @@ namespace Characters.Pathfinding
             return neighbors;
         }
 
-
         private int GetDistance(Node a, Node b)
         {
             var dstX = Mathf.Abs(a.x - b.x);
@@ -141,6 +153,52 @@ namespace Characters.Pathfinding
             if (dstX > dstY)
                 return 14 * dstY + 10 * (dstX - dstY);
             return 14 * dstX + 10 * (dstY - dstX);
+        }
+        
+        private List<Vector3> ConvertPathToWorld(List<Vector3Int> cellPath)
+        {
+            return cellPath
+                .Select(cell =>
+                {
+                    var world = tileMap.GetCellCenterWorld(new Vector3Int(cell.x + _originX, cell.y + _originY, 0));
+                    return new Vector3(Mathf.Floor(world.x), Mathf.Floor(world.y), 0);
+                })
+                .ToList();
+        }
+
+        
+        private bool IsTileClear(int tx, int ty)
+        {
+            var offsets = new int[,]
+            {
+                { 0, 0 },
+                { -1, 0 },
+                { 0, -1 },
+                { -1, -1 }
+            };
+
+            var bounds = tileMap.cellBounds;
+
+            for (var i = 0; i < offsets.GetLength(0); i++)
+            {
+                var x = tx + offsets[i, 0];
+                var y = ty + offsets[i, 1];
+                
+                if (x < 0 || y < 0 || x >= _width || y >= _height)
+                    return false;
+
+                var tile = tileMap.GetTile(new Vector3Int(bounds.x + x, bounds.y + y, 0));
+                if (tile != null && obstacleTiles.Contains(tile))
+                    return false;
+            }
+
+            return true;
+        }
+
+        
+        private bool IsValidGridIndex(int x, int y)
+        {
+            return x >= 0 && x < _width && y >= 0 && y < _height;
         }
         
         public bool IsWalkable(int x, int y)

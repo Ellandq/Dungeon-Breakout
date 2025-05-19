@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Characters.Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,31 +9,92 @@ namespace Characters.Movement.Enemies
         [Header("Patrol Info")]
         [SerializeField] private List<Vector3> patrolPoints;
         [SerializeField] private float reachThreshold = 0.1f;
-        private int _currentPatrolIndex;
+        [SerializeField] private int currentPatrolIndex;
+        [SerializeField] private bool reverseOnLoop;
+        private bool _reverse;
 
         [Header("Movement Info")] 
         [SerializeField] private float virtualRotation;
+
+        private List<Vector3> _currentPath;
+        private int _pathIndex;
 
         public override void Initialize()
         {
             base.Initialize();
             mover.IsMovementEnabled = true;
-            _currentPatrolIndex = 0;
+            currentPatrolIndex = 0;
+            SetNewPath();
         }
 
         public override void UpdateMovement()
         {
-            if (patrolPoints == null || patrolPoints.Count == 0) return;
-
-            var target = patrolPoints[_currentPatrolIndex];
-            var direction = (target - transform.position).normalized;
-
-            mover.Move(direction);
-
-            if (Vector2.Distance(transform.position, target) < reachThreshold)
+            if (_currentPath == null) return;
+            if (_currentPath.Count != 0)
             {
-                Debug.Log(_currentPatrolIndex);
-                _currentPatrolIndex = (_currentPatrolIndex + 1) % patrolPoints.Count;
+                var target = _currentPath[_pathIndex];
+                var direction = (target - transform.position).normalized;
+                mover.Move(direction * movementSettings.GetSpeed(movementType));
+                if (!(Vector3.Distance(transform.position, target) < reachThreshold)) return;
+            }
+
+            _pathIndex++;
+
+            if (_pathIndex < _currentPath.Count) return;
+            AdvancePatrolIndex();
+            SetNewPath();
+        }
+
+        private void AdvancePatrolIndex()
+        {
+            if (reverseOnLoop)
+            {
+                if (_reverse)
+                {
+                    currentPatrolIndex--;
+                    if (currentPatrolIndex >= 0) return;
+                    currentPatrolIndex = 1;
+                    _reverse = false;
+                }
+                else
+                {
+                    currentPatrolIndex++;
+                    if (currentPatrolIndex < patrolPoints.Count) return;
+                    currentPatrolIndex = patrolPoints.Count - 2;
+                    _reverse = true;
+                }
+            }
+            else
+            {
+                currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
+            }
+        }
+
+        private void SetNewPath()
+        {
+            var startCell = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), 0);
+            var targetCell = new Vector3Int(Mathf.FloorToInt(patrolPoints[currentPatrolIndex].x), Mathf.FloorToInt(patrolPoints[currentPatrolIndex].y), 0);;
+
+            Debug.Log($"[Pathfinding] Requesting path from world pos {transform.position} to {patrolPoints[currentPatrolIndex]}");
+            Debug.Log($"[Pathfinding] Converted to tilemap cells: start={startCell}, target={targetCell}");
+
+            // 🔄 Now returns a world-space path directly
+            _currentPath = PathfindingManager.Instance.FindPath(startCell, targetCell);
+
+            if (_currentPath != null)
+            {
+                Debug.Log($"[Pathfinding] Path found with {_currentPath.Count} steps:");
+                for (var i = 0; i < _currentPath.Count; i++)
+                {
+                    Debug.Log($"[Pathfinding] Step {i}: {_currentPath[i]}");
+                }
+
+                _pathIndex = 0;
+            }
+            else
+            {
+                Debug.LogWarning("[Pathfinding] No path found.");
+                _currentPath = null;
             }
         }
     }
