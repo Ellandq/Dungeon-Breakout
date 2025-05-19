@@ -15,9 +15,11 @@ namespace Characters.Movement.Enemies
 
         [Header("Movement Info")] 
         [SerializeField] private float virtualRotation;
-
         private List<Vector3> _currentPath;
         private int _pathIndex;
+        
+        [Header("Object References")]
+        [SerializeField] private VisionCone visionCone;
 
         public override void Initialize()
         {
@@ -29,6 +31,7 @@ namespace Characters.Movement.Enemies
 
         public override void UpdateMovement()
         {
+            visionCone.UpdateVisionCone(virtualRotation);
             if (_currentPath == null) return;
             if (_currentPath.Count != 0)
             {
@@ -74,26 +77,15 @@ namespace Characters.Movement.Enemies
         {
             var startCell = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), 0);
             var targetCell = new Vector3Int(Mathf.FloorToInt(patrolPoints[currentPatrolIndex].x), Mathf.FloorToInt(patrolPoints[currentPatrolIndex].y), 0);;
-
-            Debug.Log($"[Pathfinding] Requesting path from world pos {transform.position} to {patrolPoints[currentPatrolIndex]}");
-            Debug.Log($"[Pathfinding] Converted to tilemap cells: start={startCell}, target={targetCell}");
-
-            // 🔄 Now returns a world-space path directly
+            
             _currentPath = PathfindingManager.Instance.FindPath(startCell, targetCell);
 
             if (_currentPath != null)
             {
-                Debug.Log($"[Pathfinding] Path found with {_currentPath.Count} steps:");
-                for (var i = 0; i < _currentPath.Count; i++)
-                {
-                    Debug.Log($"[Pathfinding] Step {i}: {_currentPath[i]}");
-                }
-
                 _pathIndex = 0;
             }
             else
             {
-                Debug.LogWarning("[Pathfinding] No path found.");
                 _currentPath = null;
             }
         }
