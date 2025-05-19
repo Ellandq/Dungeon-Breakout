@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using UI;
+using UI.Views;
 
 namespace GameStates
 {
-    public class PlayState : IGameState
+    public class GameOverState : IGameState
     {
         public string Name { get; private set; }
         public GameStateStatus Status { get; private set; }
@@ -10,7 +11,8 @@ namespace GameStates
         public void Enter()
         {
             Status = GameStateStatus.Entering;
-            Name = "PlayState";
+            Name = "GameOverState";
+            UIManager.ActivateView(UIViews.GameOver);
             Status = GameStateStatus.Active;
         }
 
@@ -21,7 +23,7 @@ namespace GameStates
 
         public void Exit()
         {
-            
+            UIManager.DeactivateView(UIViews.GameOver);
         }
 
         public bool CanExit()
