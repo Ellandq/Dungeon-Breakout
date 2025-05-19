@@ -16,7 +16,6 @@ namespace Characters.Movement.Enemies
         [Header("Enemy Info")] 
         [SerializeField] private EnemyState currentState;
         [SerializeField] private float originRotation;
-        private Vector3 _originPosition;
         private bool _canSeePlayer;
         
         [Header("Movement Info")] 
@@ -31,7 +30,6 @@ namespace Characters.Movement.Enemies
         public override void Initialize()
         {
             base.Initialize();
-            _originPosition = transform.parent.position;
             visionCone.Initialize(PlayerFound, PlayerLost);
 
             ChangeState(EnemyState.Patrolling);
@@ -42,7 +40,8 @@ namespace Characters.Movement.Enemies
             if (currentState is EnemyState.Stationary or EnemyState.LookingAround) return;
             if (_currentPath == null || _currentPath.Count == 0)
             {
-                Debug.LogWarning("The path is null or empty");
+                if (currentState == EnemyState.Chase) RefreshPathToPlayer();
+                if (currentState == EnemyState.Searching) SetNewPathToPlayer();
                 return;
             }
             
@@ -74,7 +73,7 @@ namespace Characters.Movement.Enemies
                     }
                     break;
                 case EnemyState.Chase:
-                    StopCoroutine(RefreshPathToPlayerTimer());
+                    StopAllCoroutines();
                     RefreshPathToPlayer();
                     break;
                 case EnemyState.Searching:
@@ -103,6 +102,7 @@ namespace Characters.Movement.Enemies
                     case EnemyState.Patrolling:
                         if (patrolPath.HasPoints())
                         {
+                            patrolPath.MoveNext();
                             movementType = MovementType.Walking;
                             mover.IsMovementEnabled = true;
                             SetNewPath();
@@ -117,7 +117,6 @@ namespace Characters.Movement.Enemies
                     case EnemyState.Chase:
                         movementType = MovementType.Sprinting;
                         mover.IsMovementEnabled = true;
-                        StopCoroutine(LookAroundAndResumePatrol());
                         RefreshPathToPlayer();
                         break;
 
@@ -125,11 +124,13 @@ namespace Characters.Movement.Enemies
                     case EnemyState.Searching:
                         movementType = MovementType.Sprinting;
                         mover.IsMovementEnabled = true;
+                        StopAllCoroutines();
+                        SetNewPathToPlayer();
                         break;
                     
                     case EnemyState.LookingAround:
                         mover.IsMovementEnabled = false;
-                        StartCoroutine(LookAroundAndResumePatrol());
+                        StartCoroutine(LookAroundAndResumePatrol(patrolPath.GetWaitTime()));
                         break;
                     
                     default:
@@ -179,12 +180,12 @@ namespace Characters.Movement.Enemies
         private void PlayerFound()
         {
             _canSeePlayer = true;
+            StopAllCoroutines();
             ChangeState(EnemyState.Chase);
         }
 
         private void PlayerLost()
         {
-            Debug.Log("Hi");
             _canSeePlayer = false;
             ChangeState(EnemyState.Searching);
         }
@@ -210,9 +211,8 @@ namespace Characters.Movement.Enemies
 
         private void RefreshPathToPlayer()
         {
-            if (!_canSeePlayer || _isRefreshingPath) return;
-
             SetNewPathToPlayer();
+            if (!_canSeePlayer || _isRefreshingPath) return;
             StartCoroutine(RefreshPathToPlayerTimer());
         }
         
@@ -256,7 +256,6 @@ namespace Characters.Movement.Enemies
 
                 currentAngle = targetAngle;
             }
-
             ChangeState(EnemyState.Patrolling);
         }
 

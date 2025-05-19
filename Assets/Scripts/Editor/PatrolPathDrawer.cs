@@ -20,7 +20,7 @@ namespace Editor
             var patrolTimes = property.FindPropertyRelative("patrolPointsWaitingTime");
 
             SyncListSizes(patrolPoints, patrolTimes);
-        
+
             property.isExpanded = EditorGUI.Foldout(
                 new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight),
                 property.isExpanded,
@@ -29,14 +29,13 @@ namespace Editor
             if (property.isExpanded)
             {
                 EditorGUI.indentLevel++;
-
                 var y = position.y + EditorGUIUtility.singleLineHeight + Spacing;
 
                 for (var i = 0; i < patrolPoints.arraySize; i++)
                 {
                     var posRect = new Rect(position.x, y, position.width - ButtonWidth - 10, Vector3Height);
                     EditorGUI.PropertyField(posRect, patrolPoints.GetArrayElementAtIndex(i), new GUIContent($"Point {i}"));
-                
+
                     var removeButtonRect = new Rect(position.x + position.width - ButtonWidth, y, ButtonWidth, Vector3Height);
                     if (GUI.Button(removeButtonRect, "Remove"))
                     {
@@ -46,21 +45,39 @@ namespace Editor
                     }
 
                     y += Vector3Height + Spacing;
-                
+
                     var waitRect = new Rect(position.x + 15, y, position.width - 15, FloatHeight);
                     EditorGUI.PropertyField(waitRect, patrolTimes.GetArrayElementAtIndex(i), new GUIContent("Waiting Time"));
 
                     y += FloatHeight + (Spacing * 2);
                 }
-            
+                
                 var addButtonRect = new Rect(position.x, y, 100, 20);
                 if (GUI.Button(addButtonRect, "Add Patrol Info"))
                 {
-                    patrolPoints.InsertArrayElementAtIndex(patrolPoints.arraySize);
-                    patrolPoints.GetArrayElementAtIndex(patrolPoints.arraySize - 1).vector3Value = Vector3.zero;
+                    var go = GetGameObjectFromProperty(property);
+                    if (go && go.transform.parent)
+                    {
+                        var parentPos = go.transform.parent.position;
+                        var floored = new Vector3(Mathf.Floor(parentPos.x), Mathf.Floor(parentPos.y), Mathf.Floor(parentPos.z));
 
-                    patrolTimes.InsertArrayElementAtIndex(patrolTimes.arraySize);
-                    patrolTimes.GetArrayElementAtIndex(patrolTimes.arraySize - 1).floatValue = 0f;
+                        patrolPoints.InsertArrayElementAtIndex(patrolPoints.arraySize);
+                        patrolPoints.GetArrayElementAtIndex(patrolPoints.arraySize - 1).vector3Value = floored;
+
+                        patrolTimes.InsertArrayElementAtIndex(patrolTimes.arraySize);
+                        patrolTimes.GetArrayElementAtIndex(patrolTimes.arraySize - 1).floatValue = 0f;
+                    }
+                }
+                
+                var returnButtonRect = new Rect(position.x + 110, y, 120, 20);
+                if (GUI.Button(returnButtonRect, "Return To Origin"))
+                {
+                    var go = GetGameObjectFromProperty(property);
+                    if (go && go.transform.parent && patrolPoints.arraySize > 0)
+                    {
+                        var origin = patrolPoints.GetArrayElementAtIndex(0).vector3Value;
+                        go.transform.parent.position = origin;
+                    }
                 }
 
                 EditorGUI.indentLevel--;
@@ -92,5 +109,16 @@ namespace Editor
             while (listB.arraySize < listA.arraySize)
                 listB.InsertArrayElementAtIndex(listB.arraySize);
         }
+
+        private GameObject GetGameObjectFromProperty(SerializedProperty property)
+        {
+            var target = property.serializedObject.targetObject;
+
+            if (target is MonoBehaviour monoBehaviour)
+                return monoBehaviour.gameObject;
+
+            return null;
+        }
+
     }
 }
