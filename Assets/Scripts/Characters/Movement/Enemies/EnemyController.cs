@@ -3,6 +3,7 @@ using System.Collections;
 using Characters.Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
+using World;
 using Random = UnityEngine.Random;
 
 namespace Characters.Movement.Enemies
@@ -31,6 +32,7 @@ namespace Characters.Movement.Enemies
         
         public override void Initialize()
         {
+            WorldManager.Instance.SubscribeToOnCameraAlert((() => ChangeState(EnemyState.Searching)));
             _freshInitialization = true;
             base.Initialize();
             patrolPath.ResetPath();
@@ -113,6 +115,7 @@ namespace Characters.Movement.Enemies
             {
                 currentState = newState;
                 _freshInitialization = false;
+                visionCone.ChangeMaterial(currentState);
                 switch (currentState)
                 {
                     case EnemyState.Stationary:

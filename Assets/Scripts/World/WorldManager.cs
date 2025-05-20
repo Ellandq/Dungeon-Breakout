@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Camera;
 using GameStates;
 using UnityEngine;
@@ -15,6 +16,9 @@ namespace World
         
         [Header("Maps")] 
         [SerializeField] private List<GameObject> mapPrefabs;
+
+        [Header("Events")]
+        private Action _onCameraAlert;
 
         public void LoadLevel(int levelIndex)
         {
@@ -40,7 +44,18 @@ namespace World
 
         public void RestartCurrentLevel()
         {
+            _onCameraAlert = null;
             currentLevelInfo.ResetLevel();
+        }
+
+        public void AlertAllEnemies()
+        {
+            _onCameraAlert?.Invoke();
+        }
+
+        public void SubscribeToOnCameraAlert(Action actionToAdd)
+        {
+            _onCameraAlert += actionToAdd;
         }
     }
 }

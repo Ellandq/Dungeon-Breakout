@@ -622,7 +622,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 35403163aa44e2c46ae6b16b19ff7a1c, type: 2}
+  - {fileID: 2100000, guid: 643d35aa0ce4baa4bad9b1fc19dfec7c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -666,6 +666,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   meshFilter: {fileID: 234731952178710570}
+  meshRenderer: {fileID: 3253338114161356161}
+  chaseMat: {fileID: 2100000, guid: 35403163aa44e2c46ae6b16b19ff7a1c, type: 2}
+  alertMat: {fileID: 2100000, guid: 730c95dd810d3a4459f2cbb4047cdc25, type: 2}
+  normalMat: {fileID: 2100000, guid: 643d35aa0ce4baa4bad9b1fc19dfec7c, type: 2}
 --- !u!1 &4333926181789279421
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,10 +722,11 @@ MonoBehaviour:
     sneakingSpeed: 0
   movementType: 0
   visionCone: {fileID: 5783799282794180758}
+  playerTransform: {fileID: 2024838160927140670}
   startingRotation: 0
   maxAngle: 45
-  turnTime: 3
-  isStatic: 0
+  patrolTurnTime: 2
+  chaseTurnTime: 0.2
 --- !u!1 &4810488109948866685
 GameObject:
   m_ObjectHideFlags: 0
@@ -1183,6 +1188,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   meshFilter: {fileID: 1159609770805081119}
+  meshRenderer: {fileID: 6558505661161434027}
+  chaseMat: {fileID: 2100000, guid: 35403163aa44e2c46ae6b16b19ff7a1c, type: 2}
+  alertMat: {fileID: 2100000, guid: 730c95dd810d3a4459f2cbb4047cdc25, type: 2}
+  normalMat: {fileID: 2100000, guid: 643d35aa0ce4baa4bad9b1fc19dfec7c, type: 2}
 --- !u!1 &6972623546689192200
 GameObject:
   m_ObjectHideFlags: 0

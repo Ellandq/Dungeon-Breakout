@@ -21,7 +21,13 @@ namespace Characters
 
         [Header("Object References")]
         [SerializeField] private MeshFilter meshFilter;
+        [SerializeField] private MeshRenderer meshRenderer;
         private Mesh _visionMesh;
+
+        [Header("Materials")] 
+        [SerializeField] private Material chaseMat;
+        [SerializeField] private Material alertMat;
+        [SerializeField] private Material normalMat;
 
         public void Initialize(Action onPlayerFound, Action onPlayerLost)
         {
@@ -30,7 +36,6 @@ namespace Characters
                 name = "Vision Mesh"
             };
             meshFilter.mesh = _visionMesh;
-            var meshRenderer = GetComponent<MeshRenderer>();
             meshRenderer.sortingLayerName = "Midground";
             meshRenderer.sortingOrder = 1;
             _onPlayerFound = onPlayerFound;
@@ -117,6 +122,26 @@ namespace Characters
                     _onPlayerLost?.Invoke();
                     _canSeePlayer = false;
                     break;
+            }
+        }
+
+        public void ChangeMaterial(EnemyState state)
+        {
+            switch (state)
+            {
+                case EnemyState.Stationary:
+                case EnemyState.LookingAround:
+                case EnemyState.Patrolling:
+                    meshRenderer.material = normalMat;
+                    break;
+                case EnemyState.Chase:
+                    meshRenderer.material = chaseMat;
+                    break;
+                case EnemyState.Searching:
+                    meshRenderer.material = alertMat;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
 
