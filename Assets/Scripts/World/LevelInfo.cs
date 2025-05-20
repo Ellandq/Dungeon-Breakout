@@ -27,6 +27,7 @@ namespace World
         [SerializeField] private Transform mapParent;
         [SerializeField] private Transform characterParent;
         [SerializeField] private Transform enemiesParent;
+        [SerializeField] private Transform camerasParent;
         [SerializeField] private Transform playerTransform;
         
         [Header("Player Info")]
@@ -102,9 +103,18 @@ namespace World
                             enemy = enemy,
                             enemySpawn = child.position
                         });
-                        continue;
                     }
-
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Enemies Parent is not assigned.");
+            }
+            
+            if (camerasParent)
+            {
+                foreach (Transform child in camerasParent)
+                {
                     var camera = child.GetComponent<EnemyCamera>();
                     if (camera)
                     {
@@ -118,7 +128,7 @@ namespace World
             }
             else
             {
-                Debug.LogWarning("Enemies Parent is not assigned.");
+                Debug.LogWarning("Camera Parent is not assigned.");
             }
         }
 
