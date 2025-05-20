@@ -18,6 +18,9 @@ namespace Camera
         public void Initialize(Player player)
         {
             this.player = player;
+            var playerPos = player.transform.position;
+            playerPos.z = transform.position.z;
+            transform.position = playerPos;
             _isInitialized = true;
         }
         

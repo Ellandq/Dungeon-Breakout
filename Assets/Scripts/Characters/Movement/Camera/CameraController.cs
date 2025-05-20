@@ -13,11 +13,11 @@ namespace Characters.Movement.Camera
         [Header("Camera Settings")] 
         [SerializeField] private float startingRotation;
         [SerializeField] private float maxAngle = 45f;
-        [SerializeField] private float patrolTurnTime = 2f;
         [SerializeField] private float chaseTurnTime = 0.2f;
-
+        [SerializeField] private float patrolAngularSpeed = 20f;
+        private int _patrolDirection = 1;
+        
         private float _angle;
-        private float _targetAngle;
         private float _angleVelocity;
         private EnemyState _currentState;
         private Coroutine _searchCoroutine;
@@ -29,7 +29,6 @@ namespace Characters.Movement.Camera
             visionCone.Initialize(PlayerFound, PlayerLost);
 
             _angle = startingRotation;
-            _targetAngle = startingRotation + maxAngle;
             _currentState = EnemyState.Patrolling;
         }
 
@@ -53,13 +52,23 @@ namespace Characters.Movement.Camera
 
         private void PatrolMovement()
         {
-            _angle = Mathf.SmoothDampAngle(_angle, _targetAngle, ref _angleVelocity, patrolTurnTime);
+            _angle += patrolAngularSpeed * _patrolDirection * Time.deltaTime;
 
-            if (Mathf.Abs(Mathf.DeltaAngle(_angle, _targetAngle)) < 0.1f)
+            var minAngle = startingRotation - maxAngle;
+            var maxAngleVal = startingRotation + maxAngle;
+            
+            if (_angle > maxAngleVal)
             {
-                _targetAngle = startingRotation - (_targetAngle - startingRotation);
+                _angle = maxAngleVal;
+                _patrolDirection = -1;
+            }
+            else if (_angle < minAngle)
+            {
+                _angle = minAngle;
+                _patrolDirection = 1;
             }
         }
+
 
         private void ChaseMovement()
         {

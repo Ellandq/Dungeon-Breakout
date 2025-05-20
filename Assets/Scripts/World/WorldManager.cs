@@ -33,8 +33,6 @@ namespace World
             cameraFollow.Initialize(currentLevelInfo.GetPlayer());
             
             currentLevelInfo.ResetLevel();
-            
-            GameManager.ChangeState(new PlayState());
         }
 
         public void StopAllActors()
@@ -44,6 +42,7 @@ namespace World
 
         public void RestartCurrentLevel()
         {
+            cameraFollow.Initialize(currentLevelInfo.GetPlayer());
             _onCameraAlert = null;
             currentLevelInfo.ResetLevel();
         }

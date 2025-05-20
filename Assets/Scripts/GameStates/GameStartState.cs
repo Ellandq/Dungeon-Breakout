@@ -1,4 +1,7 @@
-﻿using World;
+﻿using UI;
+using UI.Views;
+using UnityEngine;
+using World;
 
 namespace GameStates
 {
@@ -14,6 +17,8 @@ namespace GameStates
             
             var levelIndex = GameManager.GetLevelIndex();
             WorldManager.Instance.LoadLevel(levelIndex);
+            UIManager.ActivateView(UIViews.Loading);
+            Time.timeScale = 0f;
             Status = GameStateStatus.Active;
         }
 

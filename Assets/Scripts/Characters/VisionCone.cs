@@ -40,6 +40,7 @@ namespace Characters
             meshRenderer.sortingOrder = 1;
             _onPlayerFound = onPlayerFound;
             _onPlayerLost = onPlayerLost;
+            _canSeePlayer = false;
         }
 
         public void UpdateVisionCone(float rotation)
@@ -130,7 +131,6 @@ namespace Characters
             switch (state)
             {
                 case EnemyState.Stationary:
-                case EnemyState.LookingAround:
                 case EnemyState.Patrolling:
                     meshRenderer.material = normalMat;
                     break;
@@ -138,6 +138,7 @@ namespace Characters
                     meshRenderer.material = chaseMat;
                     break;
                 case EnemyState.Searching:
+                case EnemyState.LookingAround:
                     meshRenderer.material = alertMat;
                     break;
                 default:
