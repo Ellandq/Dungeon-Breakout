@@ -1,4 +1,5 @@
 ﻿using Input;
+using UnityEngine;
 using Utils;
 
 namespace Characters.Movement.Player
@@ -15,14 +16,14 @@ namespace Characters.Movement.Player
         public override void UpdateMovement()
         {
             var speed = movementSettings.GetSpeed(movementType);
-            var directions = Vector2Utils.ConvertFromDirections(moveDirections);
+            var directions = Vector2Utils.ConvertFromDirections(MoveDirections);
             
             mover.Move(speed * directions);
         }
         
         private void SubscribeToInputEvents()
         {
-            var inputHandle = InputManager.getKeyboardInputHandle();
+            var inputHandle = InputManager.GetKeyboardInputHandle();
             
             // Basic movement
             inputHandle.AddListenerOnInputAction(state => ChangeMoveDirection(MoveDirection.Up, state), "Move Forwards");
@@ -37,7 +38,7 @@ namespace Characters.Movement.Player
         
         private void ChangeMoveDirection(MoveDirection direction, ButtonState buttonState)
         {
-            moveDirections[direction] = buttonState == ButtonState.Down;
+            MoveDirections[direction] = buttonState == ButtonState.Down;
         }
 
         private void ChangeMovementType(MovementType type, ButtonState buttonState)
