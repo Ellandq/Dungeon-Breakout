@@ -1,29 +1,42 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using GameStates;
+using Input;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using World;
 
 namespace UI.Views
 {
     public class GameOverView : UIView
     {
         [Header("Settings")] 
-        private const float StartingTopPos = 11500f;
-        private const float StartingBottomPos = -11500f;
         private const float StartingScale = 70f;
         
         [Header("Object References")]
         [SerializeField] private RectTransform gameOverRectTransform;
         [SerializeField] private Image backgroundImage;
+        [SerializeField] private TMP_Text pressAnyButtonText;
+
+        [Header("Events")] 
+        private Action _onAnyButtonPressed;
 
         public override void ActivateView()
         {
-            gameOverRectTransform.offsetMin = new Vector2(gameOverRectTransform.offsetMin.x, StartingBottomPos);
-            gameOverRectTransform.offsetMax = new Vector2(gameOverRectTransform.offsetMax.x, StartingTopPos);
+            _onAnyButtonPressed = () =>
+            {
+                UIManager.DeactivateView(UIViews.GameOver);
+                GameManager.ChangeState(new RestartGameState());
+            };
+            
             gameOverRectTransform.localScale = Vector3.one * StartingScale;
 
             var color = backgroundImage.color;
             color.a = 0f;
             backgroundImage.color = color;
+
+            pressAnyButtonText.alpha = 0f;
             
             gameObject.SetActive(true);
 
@@ -32,20 +45,17 @@ namespace UI.Views
 
         public override void DeactivateView()
         {
+            StopAllCoroutines();
+            InputManager.GetKeyboardInputHandle().RemoveListenerOnAnyKeyPressed(_onAnyButtonPressed);
             gameObject.SetActive(false);
+            
         }
 
         private IEnumerator GameOverAnimation()
         {
-            const float duration = 2.0f;
+            const float duration = 1.0f;
             var elapsed = 0f;
-
-            var initialOffsetMin = new Vector2(gameOverRectTransform.offsetMin.x, StartingBottomPos);
-            var initialOffsetMax = new Vector2(gameOverRectTransform.offsetMax.x, StartingTopPos);
             var initialScale = Vector3.one * StartingScale;
-
-            var targetOffsetMin = new Vector2(initialOffsetMin.x, 0f);
-            var targetOffsetMax = new Vector2(initialOffsetMax.x, 0f);
             var targetScale = Vector3.one;
 
             while (elapsed < duration)
@@ -53,18 +63,11 @@ namespace UI.Views
                 elapsed += Time.deltaTime;
                 var t = Mathf.Clamp01(elapsed / duration);
 
-                var newOffsetMinY = Mathf.Lerp(initialOffsetMin.y, targetOffsetMin.y, t);
-                var newOffsetMaxY = Mathf.Lerp(initialOffsetMax.y, targetOffsetMax.y, t);
-                gameOverRectTransform.offsetMin = new Vector2(gameOverRectTransform.offsetMin.x, newOffsetMinY);
-                gameOverRectTransform.offsetMax = new Vector2(gameOverRectTransform.offsetMax.x, newOffsetMaxY);
-
                 gameOverRectTransform.localScale = Vector3.Lerp(initialScale, targetScale, t);
 
                 yield return null;
             }
-
-            gameOverRectTransform.offsetMin = new Vector2(gameOverRectTransform.offsetMin.x, 0f);
-            gameOverRectTransform.offsetMax = new Vector2(gameOverRectTransform.offsetMax.x, 0f);
+            
             gameOverRectTransform.localScale = Vector3.one;
             StartCoroutine(BackgroundFadeIn());
         }
@@ -91,6 +94,47 @@ namespace UI.Views
 
             color.a = 1f;
             backgroundImage.color = color;
+            StartCoroutine(TextFadeInAndOut());
+            WorldManager.Instance.StopAllActors();
+        }
+
+        private IEnumerator TextFadeInAndOut()
+        {
+            InputManager.GetKeyboardInputHandle().AddListenerOnAnyKeyPressed(_onAnyButtonPressed);
+            
+            const float duration = 1.5f;
+            var alpha = pressAnyButtonText.alpha;
+            var fadeIn = true;
+            var firstFadeIn = true;
+            var elapsed = 0f;
+            
+            while (true)
+            {
+                elapsed += Time.deltaTime;
+                var t = Mathf.Clamp01(elapsed / (firstFadeIn ? duration * 2f : duration));
+                fadeIn = fadeIn switch
+                {
+                    true when Mathf.Approximately(alpha, 1f) => false,
+                    false when Mathf.Approximately(alpha, 0.5f) => true,
+                    _ => fadeIn
+                };
+                if (fadeIn)
+                {
+                    if (firstFadeIn)
+                    {
+                        pressAnyButtonText.alpha = Mathf.Lerp(0f, 1f, t);
+                        yield return null;
+                        continue;
+                    }
+
+                    pressAnyButtonText.alpha = Mathf.Lerp(0.5f, 1f, t);
+                    yield return null;
+                    continue;
+                }
+                firstFadeIn = false;
+                pressAnyButtonText.alpha = Mathf.Lerp(1f, 0.5f, t);
+                yield return null;
+            }
         }
 
     }

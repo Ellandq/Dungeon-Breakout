@@ -2,6 +2,7 @@
 {
     public enum UIViews
     {
-        GameOver
+        GameOver,
+        Loading
     }
 }

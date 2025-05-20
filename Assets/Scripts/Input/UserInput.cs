@@ -8,6 +8,7 @@ namespace Input
     {
         [Header("Events")] 
         protected Dictionary<string, Action<ButtonState>> OnInputAction;
+        protected Action OnAnyKeyPressed;
 
         [Header("Key Information")] 
         protected Dictionary<string, T> ButtonAssignment;
@@ -40,5 +41,9 @@ namespace Input
         }
         
         public void AddListenerOnInputAction (Action<ButtonState> actionToAdd, string key) { OnInputAction[key] += actionToAdd; }
+        
+        public void AddListenerOnAnyKeyPressed (Action actionToAdd) { OnAnyKeyPressed += actionToAdd; }
+        
+        public void RemoveListenerOnAnyKeyPressed (Action actionToAdd) { OnAnyKeyPressed -= actionToAdd; }
     }
 }
