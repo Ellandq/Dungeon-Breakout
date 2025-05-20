@@ -35,5 +35,11 @@ namespace Characters.Pathfinding
         {
             return patrolPoints.Count != 0;
         }
+
+        public void ResetPath()
+        {
+            _currentPatrolPoint = 0;
+            _reverse = false;
+        }
     }
 }

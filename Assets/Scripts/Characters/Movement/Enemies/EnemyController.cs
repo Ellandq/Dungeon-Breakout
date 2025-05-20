@@ -11,7 +11,7 @@ namespace Characters.Movement.Enemies
     {
         [Header("Object References")]
         [SerializeField] private VisionCone visionCone;
-        [SerializeField] private Characters.Player player;
+        [SerializeField] private global::Characters.Player player;
         
         [Header("Enemy Info")] 
         [SerializeField] private EnemyState currentState;
@@ -26,32 +26,50 @@ namespace Characters.Movement.Enemies
         private List<Vector3> _currentPath;
         private int _pathIndex;
         private bool _isRefreshingPath;
+        private bool _fallbackToDirectMovement;
         
         public override void Initialize()
         {
             base.Initialize();
-            visionCone.Initialize(PlayerFound, PlayerLost);
+            patrolPath.ResetPath();
 
+            _currentPath = null;
+            _pathIndex = 0;
+            _isRefreshingPath = false;
+            _canSeePlayer = false;
+
+            visionCone.Initialize(PlayerFound, PlayerLost);
             ChangeState(EnemyState.Patrolling);
         }
+
 
         public override void UpdateMovement()
         {
             if (currentState is EnemyState.Stationary or EnemyState.LookingAround) return;
+
+            if (_fallbackToDirectMovement && currentState == EnemyState.Chase)
+            {
+                var direction = (player.transform.position - transform.position).normalized;
+                SmoothRotateTowards(direction);
+                mover.Move(direction * movementSettings.GetSpeed(movementType));
+                return;
+            }
+
             if (_currentPath == null || _currentPath.Count == 0)
             {
                 if (currentState == EnemyState.Chase) RefreshPathToPlayer();
                 if (currentState == EnemyState.Searching) SetNewPathToPlayer();
                 return;
             }
-            
+
             var target = _currentPath[_pathIndex];
-            var direction = (target - transform.position).normalized;
-            
-            SmoothRotateTowards(direction);
-            mover.Move(direction * movementSettings.GetSpeed(movementType));
+            var moveDir = (target - transform.position).normalized;
+
+            SmoothRotateTowards(moveDir);
+            mover.Move(moveDir * movementSettings.GetSpeed(movementType));
             CheckNextMove();
         }
+
 
         private void CheckNextMove()
         {
@@ -162,16 +180,22 @@ namespace Characters.Movement.Enemies
         private void SetPath(Vector3Int startCell, Vector3Int targetCell)
         {
             _currentPath = PathfindingManager.Instance.FindPath(startCell, targetCell);
-            
-            if (_currentPath != null)
+    
+            if (_currentPath is { Count: > 0 })
             {
                 _pathIndex = 0;
+                _fallbackToDirectMovement = false;
             }
             else
             {
                 _currentPath = null;
+                if (currentState == EnemyState.Chase && _canSeePlayer)
+                {
+                    _fallbackToDirectMovement = true;
+                }
             }
         }
+
 
         #endregion
 
@@ -186,6 +210,7 @@ namespace Characters.Movement.Enemies
 
         private void PlayerLost()
         {
+            if (!_canSeePlayer) return;
             _canSeePlayer = false;
             ChangeState(EnemyState.Searching);
         }

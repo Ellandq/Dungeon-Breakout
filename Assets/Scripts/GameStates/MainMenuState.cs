@@ -1,8 +1,6 @@
-﻿using UnityEngine;
-
-namespace GameStates
+﻿namespace GameStates
 {
-    public class PlayState : IGameState
+    public class MainMenuState : IGameState
     {
         public string Name { get; private set; }
         public GameStateStatus Status { get; private set; }
@@ -10,14 +8,13 @@ namespace GameStates
         public void Enter()
         {
             Status = GameStateStatus.Entering;
-            Name = "PlayState";
-            Time.timeScale = 1f;
+            Name = "MainMenuState";
             Status = GameStateStatus.Active;
         }
 
         public void Update()
         {
-            
+           
         }
 
         public void Exit()

@@ -39,6 +39,12 @@ namespace Characters
 
         public void UpdateVisionCone(float rotation)
         {
+            if (!_visionMesh)
+            {
+                _visionMesh = new Mesh { name = "Vision Mesh" };
+                meshFilter.mesh = _visionMesh;
+            }
+            
             _currentRotation = rotation;
             var startAngle = _currentRotation - visionAngle / 2f;
             var angleStep = visionAngle / rayCount;
