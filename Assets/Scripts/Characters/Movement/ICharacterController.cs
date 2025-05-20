@@ -1,4 +1,6 @@
-﻿namespace Characters.Movement
+﻿using System;
+
+namespace Characters.Movement
 {
     public interface ICharacterController
     {

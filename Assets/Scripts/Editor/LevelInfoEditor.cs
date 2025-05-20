@@ -10,6 +10,7 @@ namespace Editor
         private SerializedProperty _mapParent;
         private SerializedProperty _charactersParent;
         private SerializedProperty _enemiesParent;
+        private SerializedProperty _camerasParent;
         private SerializedProperty _playerTransform;
 
         private void OnEnable()
@@ -17,6 +18,7 @@ namespace Editor
             _mapParent = serializedObject.FindProperty("mapParent");
             _charactersParent = serializedObject.FindProperty("characterParent");
             _enemiesParent = serializedObject.FindProperty("enemiesParent");
+            _camerasParent = serializedObject.FindProperty("camerasParent");
             _playerTransform = serializedObject.FindProperty("playerTransform");
         }
 
@@ -30,6 +32,7 @@ namespace Editor
             EditorGUILayout.PropertyField(_mapParent);
             EditorGUILayout.PropertyField(_charactersParent);
             EditorGUILayout.PropertyField(_enemiesParent);
+            EditorGUILayout.PropertyField(_camerasParent);
             EditorGUILayout.PropertyField(_playerTransform);
 
             EditorGUILayout.Space();

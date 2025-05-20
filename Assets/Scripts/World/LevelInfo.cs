@@ -27,6 +27,7 @@ namespace World
         [SerializeField] private Transform mapParent;
         [SerializeField] private Transform characterParent;
         [SerializeField] private Transform enemiesParent;
+        [SerializeField] private Transform camerasParent;
         [SerializeField] private Transform playerTransform;
         
         [Header("Player Info")]
@@ -46,9 +47,9 @@ namespace World
         {
             player.Deinitialize();
             
-            foreach (var pair in enemiesInfo)
+            foreach (var info in enemiesInfo)
             {
-                pair.enemy.Deinitialize();
+                info.enemy.Deinitialize();
             }
             
             foreach (var pair in camerasInfo)
@@ -61,14 +62,22 @@ namespace World
         {
             player.Initialize(playerSpawn);
             
-            foreach (var pair in enemiesInfo)
+            foreach (var info in enemiesInfo)
             {
-                pair.enemy.Initialize(pair.enemySpawn);
+                info.enemy.Initialize(info.enemySpawn);
             }
             
-            foreach (var pair in camerasInfo)
+            foreach (var info in camerasInfo)
             {
-                pair.camera.Initialize(Vector3.zero, pair.startingRotation);
+                info.camera.Initialize(Vector3.zero, info.startingRotation);
+            }
+        }
+        
+        public void AlertAllEnemies()
+        {
+            foreach (var info in enemiesInfo)
+            {
+                
             }
         }
 
@@ -102,9 +111,18 @@ namespace World
                             enemy = enemy,
                             enemySpawn = child.position
                         });
-                        continue;
                     }
-
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Enemies Parent is not assigned.");
+            }
+            
+            if (camerasParent)
+            {
+                foreach (Transform child in camerasParent)
+                {
                     var camera = child.GetComponent<EnemyCamera>();
                     if (camera)
                     {
@@ -118,7 +136,7 @@ namespace World
             }
             else
             {
-                Debug.LogWarning("Enemies Parent is not assigned.");
+                Debug.LogWarning("Camera Parent is not assigned.");
             }
         }
 
