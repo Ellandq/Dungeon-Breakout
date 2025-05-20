@@ -1,4 +1,6 @@
-﻿namespace GameStates
+﻿using UnityEngine;
+
+namespace GameStates
 {
     public class PlayState : IGameState
     {
@@ -9,6 +11,7 @@
         {
             Status = GameStateStatus.Entering;
             Name = "PlayState";
+            Time.timeScale = 1f;
             Status = GameStateStatus.Active;
         }
 
@@ -19,7 +22,7 @@
 
         public void Exit()
         {
-           
+            
         }
 
         public bool CanExit()

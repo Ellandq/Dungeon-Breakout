@@ -35,6 +35,11 @@ namespace Input
                         break;
                 }
             }
+            
+            if (UnityEngine.Input.anyKeyDown)
+            {
+                OnAnyKeyPressed?.Invoke();
+            }
         } 
     }
 }

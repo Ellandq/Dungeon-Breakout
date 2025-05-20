@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameManager : ManagerBase<GameManager>
 {
     private IGameState _currentState;
+    private int _currentLevelIndex;
 
     #if UNITY_EDITOR
         [Header("State Information")]
@@ -15,8 +16,7 @@ public class GameManager : ManagerBase<GameManager>
 
     private void Start()
     {
-        // TODO Rework this to use main menu as the default or work based on the given scene
-        ChangeState(new PlayState());
+        ChangeState(new MainMenuState());
     }
 
     private void Update()
@@ -28,9 +28,19 @@ public class GameManager : ManagerBase<GameManager>
         _currentState?.Update();
     }
 
-    public void ChangeState(IGameState nextState)
+    public static void ChangeState(IGameState nextState)
     {
-        StartCoroutine(TransitionTo(nextState));
+        Instance.StartCoroutine(Instance.TransitionTo(nextState));
+    }
+
+    public static void SetLevelIndex(int index)
+    {
+        Instance._currentLevelIndex = index;
+    }
+
+    public static int GetLevelIndex()
+    {
+        return Instance._currentLevelIndex;
     }
 
     private IEnumerator TransitionTo(IGameState nextState)
