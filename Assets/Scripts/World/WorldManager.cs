@@ -30,9 +30,8 @@ namespace World
             if (currentLevel) Destroy(currentLevel);
             currentLevel = Instantiate(mapPrefabs[levelIndex], worldTransform);
             currentLevelInfo = currentLevel.GetComponent<LevelInfo>();
-            cameraFollow.Initialize(currentLevelInfo.GetPlayer());
-            
             currentLevelInfo.ResetLevel();
+            cameraFollow.Initialize(currentLevelInfo.GetPlayer());
         }
 
         public void StopAllActors()
@@ -42,9 +41,9 @@ namespace World
 
         public void RestartCurrentLevel()
         {
-            cameraFollow.Initialize(currentLevelInfo.GetPlayer());
             _onCameraAlert = null;
             currentLevelInfo.ResetLevel();
+            cameraFollow.Initialize(currentLevelInfo.GetPlayer());
         }
 
         public void AlertAllEnemies()

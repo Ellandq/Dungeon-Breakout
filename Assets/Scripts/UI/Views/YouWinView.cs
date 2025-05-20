@@ -101,38 +101,41 @@ namespace UI.Views
         private IEnumerator TextFadeInAndOut()
         {
             InputManager.GetKeyboardInputHandle().AddListenerOnAnyKeyPressed(_onAnyButtonPressed);
-            
-            const float duration = 1.5f;
-            var alpha = pressAnyButtonText.alpha;
-            var fadeIn = true;
-            var firstFadeIn = true;
+
+            const float initialFadeDuration = 2.0f;
             var elapsed = 0f;
-            
-            while (true)
+
+            while (elapsed < initialFadeDuration)
             {
                 elapsed += Time.unscaledDeltaTime;
-                var t = Mathf.Clamp01(elapsed / (firstFadeIn ? duration * 2f : duration));
-                fadeIn = fadeIn switch
-                {
-                    true when Mathf.Approximately(alpha, 1f) => false,
-                    false when Mathf.Approximately(alpha, 0.5f) => true,
-                    _ => fadeIn
-                };
-                if (fadeIn)
-                {
-                    if (firstFadeIn)
-                    {
-                        pressAnyButtonText.alpha = Mathf.Lerp(0f, 1f, t);
-                        yield return null;
-                        continue;
-                    }
+                var t = Mathf.Clamp01(elapsed / initialFadeDuration);
+                pressAnyButtonText.alpha = Mathf.Lerp(0f, 1f, t);
+                yield return null;
+            }
 
-                    pressAnyButtonText.alpha = Mathf.Lerp(0.5f, 1f, t);
-                    yield return null;
-                    continue;
+            pressAnyButtonText.alpha = 1f;
+
+            const float fadeSpeed = 0.5f;
+            var alpha = 1f;
+            var direction = -1f;
+
+            while (true)
+            {
+                alpha += direction * fadeSpeed * Time.unscaledDeltaTime;
+
+                switch (alpha)
+                {
+                    case >= 1f:
+                        alpha = 1f;
+                        direction = -1f;
+                        break;
+                    case <= 0.5f:
+                        alpha = 0.5f;
+                        direction = 1f;
+                        break;
                 }
-                firstFadeIn = false;
-                pressAnyButtonText.alpha = Mathf.Lerp(1f, 0.5f, t);
+
+                pressAnyButtonText.alpha = alpha;
                 yield return null;
             }
         }

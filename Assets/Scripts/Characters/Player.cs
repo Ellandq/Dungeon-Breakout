@@ -25,6 +25,11 @@ namespace Characters
                 controller.DisableMovement();
                 GameManager.ChangeState(new YouWonGameState());
             }
+            else if (objLayer == LayerMask.NameToLayer("Panel"))
+            {
+                // controller.DisableMovement();
+                // TODO
+            }
         }
     }
 }
