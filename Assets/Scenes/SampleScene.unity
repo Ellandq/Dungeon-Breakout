@@ -1064,7 +1064,7 @@ MonoBehaviour:
   worldTransform: {fileID: 8772027201598009469}
   cameraFollow: {fileID: 824775456133941308}
   mapPrefabs:
-  - {fileID: 4160907404523495334, guid: 42c2a320e8ba17d4bbd062aac06870f4, type: 3}
+  - {fileID: 5010824247651063594, guid: 42c2a320e8ba17d4bbd062aac06870f4, type: 3}
 --- !u!1 &1346241906
 GameObject:
   m_ObjectHideFlags: 0
