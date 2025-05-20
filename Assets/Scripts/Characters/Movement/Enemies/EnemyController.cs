@@ -27,9 +27,11 @@ namespace Characters.Movement.Enemies
         private int _pathIndex;
         private bool _isRefreshingPath;
         private bool _fallbackToDirectMovement;
+        private bool _freshInitialization;
         
         public override void Initialize()
         {
+            _freshInitialization = true;
             base.Initialize();
             patrolPath.ResetPath();
 
@@ -58,7 +60,7 @@ namespace Characters.Movement.Enemies
             if (_currentPath == null || _currentPath.Count == 0)
             {
                 if (currentState == EnemyState.Chase) RefreshPathToPlayer();
-                if (currentState == EnemyState.Searching) SetNewPathToPlayer();
+                if (currentState == EnemyState.Searching && !_freshInitialization) SetNewPathToPlayer();
                 return;
             }
 
@@ -110,6 +112,7 @@ namespace Characters.Movement.Enemies
             do
             {
                 currentState = newState;
+                _freshInitialization = false;
                 switch (currentState)
                 {
                     case EnemyState.Stationary:
