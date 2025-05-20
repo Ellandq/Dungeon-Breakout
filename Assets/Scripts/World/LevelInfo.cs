@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Camera;
 using Characters;
+using InteractablePanel;
 using UnityEngine;
 
 namespace World
@@ -28,6 +28,7 @@ namespace World
         [SerializeField] private Transform characterParent;
         [SerializeField] private Transform enemiesParent;
         [SerializeField] private Transform camerasParent;
+        [SerializeField] private Transform panelsParent;
         [SerializeField] private Transform playerTransform;
         
         [Header("Player Info")]
@@ -37,6 +38,7 @@ namespace World
         [Header("Enemy Info")] 
         [SerializeField] private List<EnemyInfo> enemiesInfo;
         [SerializeField] private List<CameraInfo> camerasInfo;
+        [SerializeField] private List<InteractablePanelObject> panels;
 
         public Player Player => player;
         public Vector3 PlayerSpawn => playerSpawn;
@@ -71,13 +73,10 @@ namespace World
             {
                 info.camera.Initialize(Vector3.zero, info.startingRotation);
             }
-        }
-        
-        public void AlertAllEnemies()
-        {
-            foreach (var info in enemiesInfo)
+            
+            foreach (var panel in panels)
             {
-                
+                panel.Initialize();
             }
         }
 
@@ -95,7 +94,6 @@ namespace World
                 playerSpawn = Vector3.zero;
             }
 
-            // Clear old data
             enemiesInfo = new List<EnemyInfo>();
             camerasInfo = new List<CameraInfo>();
 
@@ -137,6 +135,25 @@ namespace World
             else
             {
                 Debug.LogWarning("Camera Parent is not assigned.");
+            }
+            
+            if (panelsParent)
+            {
+                foreach (Transform child in panelsParent)
+                {
+                    foreach (Transform panelChild in child)
+                    {
+                        var panel = panelChild.GetComponent<InteractablePanelObject>();
+                        if (panel)
+                        {
+                            panels.Add(panel);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Panels Parent is not assigned.");
             }
         }
 

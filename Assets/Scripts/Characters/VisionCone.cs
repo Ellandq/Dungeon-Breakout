@@ -13,7 +13,7 @@ namespace Characters
         [Header("Vision Cone Settings")]
         [SerializeField] private float visionDistance = 3f;
         [SerializeField] private float visionAngle = 90f;
-        [SerializeField] private int rayCount = 90;
+        [SerializeField] private int rayCount = 180;
         [SerializeField] private LayerMask obstacleMask;
         [SerializeField] private LayerMask targetMask;
         private float _currentRotation;

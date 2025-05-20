@@ -1,7 +1,4 @@
-﻿using Characters.Movement;
-using UnityEngine;
-
-namespace Characters
+﻿namespace Characters
 {
     public class Enemy : Characters
     {

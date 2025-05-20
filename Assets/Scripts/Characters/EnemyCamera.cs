@@ -1,5 +1,4 @@
-﻿using Characters.Movement;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Characters
 {

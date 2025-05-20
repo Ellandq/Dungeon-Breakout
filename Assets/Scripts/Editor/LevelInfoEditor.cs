@@ -11,6 +11,7 @@ namespace Editor
         private SerializedProperty _charactersParent;
         private SerializedProperty _enemiesParent;
         private SerializedProperty _camerasParent;
+        private SerializedProperty _panelsParent;
         private SerializedProperty _playerTransform;
 
         private void OnEnable()
@@ -19,12 +20,13 @@ namespace Editor
             _charactersParent = serializedObject.FindProperty("characterParent");
             _enemiesParent = serializedObject.FindProperty("enemiesParent");
             _camerasParent = serializedObject.FindProperty("camerasParent");
+            _panelsParent = serializedObject.FindProperty("panelsParent");
             _playerTransform = serializedObject.FindProperty("playerTransform");
         }
 
         public override void OnInspectorGUI()
         {
-            LevelInfo levelInfo = (LevelInfo)target;
+            var levelInfo = (LevelInfo)target;
             serializedObject.Update();
 
             // Editable: Section References
@@ -33,6 +35,7 @@ namespace Editor
             EditorGUILayout.PropertyField(_charactersParent);
             EditorGUILayout.PropertyField(_enemiesParent);
             EditorGUILayout.PropertyField(_camerasParent);
+            EditorGUILayout.PropertyField(_panelsParent);
             EditorGUILayout.PropertyField(_playerTransform);
 
             EditorGUILayout.Space();
@@ -50,7 +53,7 @@ namespace Editor
             var enemies = levelInfo.EnemiesInfo;
             if (enemies != null)
             {
-                for (int i = 0; i < enemies.Count; i++)
+                for (var i = 0; i < enemies.Count; i++)
                 {
                     EditorGUILayout.LabelField($"Enemy {i + 1}", EditorStyles.miniBoldLabel);
                     EditorGUILayout.ObjectField("Enemy", enemies[i].enemy, typeof(Object), true);
@@ -65,7 +68,7 @@ namespace Editor
             var cameras = levelInfo.CamerasInfo;
             if (cameras != null)
             {
-                for (int i = 0; i < cameras.Count; i++)
+                for (var i = 0; i < cameras.Count; i++)
                 {
                     EditorGUILayout.LabelField($"Camera {i + 1}", EditorStyles.miniBoldLabel);
                     EditorGUILayout.ObjectField("Camera", cameras[i].camera, typeof(Object), true);

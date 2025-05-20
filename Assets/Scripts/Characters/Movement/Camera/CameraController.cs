@@ -21,13 +21,14 @@ namespace Characters.Movement.Camera
         private float _angleVelocity;
         private EnemyState _currentState;
         private Coroutine _searchCoroutine;
+        private Coroutine _alertCoroutine;
         private Vector3 _lastKnownPlayerPos;
 
         public override void Initialize()
         {
             base.Initialize();
+            StopAllCoroutines();
             visionCone.Initialize(PlayerFound, PlayerLost);
-
             _angle = startingRotation;
             _currentState = EnemyState.Patrolling;
         }
@@ -69,11 +70,9 @@ namespace Characters.Movement.Camera
             }
         }
 
-
         private void ChaseMovement()
         {
             _lastKnownPlayerPos = playerTransform.position;
-
             var dirToPlayer = (_lastKnownPlayerPos - transform.position).normalized;
             var targetAngle = Mathf.Atan2(dirToPlayer.y, dirToPlayer.x) * Mathf.Rad2Deg;
 
@@ -84,7 +83,6 @@ namespace Characters.Movement.Camera
             _angle = Mathf.SmoothDampAngle(_angle, targetAngle, ref _angleVelocity, chaseTurnTime);
         }
 
-
         private void PlayerFound()
         {
             if (_searchCoroutine != null)
@@ -92,10 +90,10 @@ namespace Characters.Movement.Camera
                 StopCoroutine(_searchCoroutine);
                 _searchCoroutine = null;
             }
+            _alertCoroutine ??= StartCoroutine(AlertLoop());
+
             _currentState = EnemyState.Chase;
             _lastKnownPlayerPos = playerTransform.position;
-            
-            WorldManager.Instance.AlertAllEnemies();
         }
 
         private void PlayerLost()
@@ -111,7 +109,10 @@ namespace Characters.Movement.Camera
                 }
                 _searchCoroutine = StartCoroutine(SearchTimer());
             }
-            WorldManager.Instance.AlertAllEnemies();
+
+            if (_alertCoroutine == null) return;
+            StopCoroutine(_alertCoroutine);
+            _alertCoroutine = null;
         }
 
         private IEnumerator SearchTimer()
@@ -124,6 +125,15 @@ namespace Characters.Movement.Camera
             }
             _currentState = EnemyState.Patrolling;
             _searchCoroutine = null;
+        }
+
+        private static IEnumerator AlertLoop()
+        {
+            while (true)
+            {
+                WorldManager.Instance.AlertAllEnemies();
+                yield return new WaitForSeconds(0.2f);
+            }
         }
 
         private static float ClampAngle(float angle, float min, float max)

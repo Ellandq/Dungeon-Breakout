@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Characters.Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
@@ -180,6 +179,11 @@ namespace Characters.Movement.Enemies
             var startCell = new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), 0);
             var targetCell = new Vector3Int(Mathf.FloorToInt(playerPos.x), Mathf.FloorToInt(playerPos.y), 0);
 
+            SetPath(startCell, targetCell);
+
+            if (_currentPath != null) return;
+            startCell.x++;
+            startCell.y++;
             SetPath(startCell, targetCell);
         }
 

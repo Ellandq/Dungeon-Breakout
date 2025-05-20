@@ -1,4 +1,5 @@
 ﻿using GameStates;
+using InteractablePanel;
 using UnityEngine;
 
 namespace Characters
@@ -27,8 +28,9 @@ namespace Characters
             }
             else if (objLayer == LayerMask.NameToLayer("Panel"))
             {
-                // controller.DisableMovement();
-                // TODO
+                var panel =  other.GetComponent<InteractablePanelObject>();
+                if (panel == null) return;
+                panel.Interact();
             }
         }
     }

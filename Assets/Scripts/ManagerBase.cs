@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public abstract class ManagerBase<T> : MonoBehaviour where T : MonoBehaviour

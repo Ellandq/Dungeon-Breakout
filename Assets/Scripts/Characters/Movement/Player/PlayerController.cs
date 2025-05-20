@@ -1,5 +1,4 @@
 ﻿using Input;
-using UnityEngine;
 using Utils;
 
 namespace Characters.Movement.Player
