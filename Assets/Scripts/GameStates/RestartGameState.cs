@@ -7,13 +7,12 @@ namespace GameStates
 {
     public class RestartGameState : IGameState
     {
-        public string Name { get; private set; }
+        public string Name => "GameRestartState";
         public GameStateStatus Status { get; private set; }
         
         public void Enter()
         {
             Status = GameStateStatus.Entering;
-            Name = "GameRestartState";
             Time.timeScale = 0f;
             UIManager.ActivateView(UIViews.Loading);
             WorldManager.Instance.RestartCurrentLevel();

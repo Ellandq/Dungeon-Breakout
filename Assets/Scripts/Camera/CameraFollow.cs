@@ -1,6 +1,4 @@
-﻿using System;
-using Characters;
-using UI;
+﻿using Characters;
 using UnityEngine;
 
 namespace Camera

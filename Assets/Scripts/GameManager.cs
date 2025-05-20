@@ -30,6 +30,7 @@ public class GameManager : ManagerBase<GameManager>
 
     public static void ChangeState(IGameState nextState)
     {
+        if (Instance._currentState != null && nextState.Name == Instance._currentState.Name) return;
         Instance.StartCoroutine(Instance.TransitionTo(nextState));
     }
 

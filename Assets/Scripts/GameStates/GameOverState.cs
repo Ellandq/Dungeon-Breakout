@@ -5,13 +5,12 @@ namespace GameStates
 {
     public class GameOverState : IGameState
     {
-        public string Name { get; private set; }
+        public string Name => "GameOverState";
         public GameStateStatus Status { get; private set; }
         
         public void Enter()
         {
             Status = GameStateStatus.Entering;
-            Name = "GameOverState";
             UIManager.ActivateView(UIViews.GameOver);
             Status = GameStateStatus.Active;
         }

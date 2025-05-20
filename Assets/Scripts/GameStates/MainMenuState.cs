@@ -2,13 +2,12 @@
 {
     public class MainMenuState : IGameState
     {
-        public string Name { get; private set; }
+        public string Name => "MainMenuState";
         public GameStateStatus Status { get; private set; }
         
         public void Enter()
         {
             Status = GameStateStatus.Entering;
-            Name = "MainMenuState";
             Status = GameStateStatus.Active;
         }
 

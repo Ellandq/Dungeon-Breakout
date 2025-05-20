@@ -7,14 +7,12 @@ namespace GameStates
 {
     public class GameStartState : IGameState
     {
-        public string Name { get; private set; }
+        public string Name => "GameStartState";
         public GameStateStatus Status { get; private set; }
         
         public void Enter()
         {
             Status = GameStateStatus.Entering;
-            Name = "GameStartState";
-            
             var levelIndex = GameManager.GetLevelIndex();
             WorldManager.Instance.LoadLevel(levelIndex);
             UIManager.ActivateView(UIViews.Loading);
