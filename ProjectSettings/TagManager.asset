@@ -15,7 +15,7 @@ TagManager:
   - Floor
   - Wall
   - Panel
-  - 
+  - Exit
   - Player
   - Enemy
   - Camera

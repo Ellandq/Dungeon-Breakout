@@ -1,6 +1,4 @@
-﻿using System;
-using Characters.Movement;
-using GameStates;
+﻿using GameStates;
 using UnityEngine;
 
 namespace Characters
@@ -22,9 +20,10 @@ namespace Characters
                 controller.DisableMovement();
                 GameManager.ChangeState(new GameOverState());
             }
-            else
+            else if (objLayer == LayerMask.NameToLayer("Exit"))
             {
-                    
+                controller.DisableMovement();
+                GameManager.ChangeState(new YouWonGameState());
             }
         }
     }

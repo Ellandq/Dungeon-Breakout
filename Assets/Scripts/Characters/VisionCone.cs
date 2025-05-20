@@ -132,13 +132,13 @@ namespace Characters
             {
                 case EnemyState.Stationary:
                 case EnemyState.Patrolling:
+                case EnemyState.LookingAround:
                     meshRenderer.material = normalMat;
                     break;
                 case EnemyState.Chase:
                     meshRenderer.material = chaseMat;
                     break;
                 case EnemyState.Searching:
-                case EnemyState.LookingAround:
                     meshRenderer.material = alertMat;
                     break;
                 default:
