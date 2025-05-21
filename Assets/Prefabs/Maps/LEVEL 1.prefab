@@ -154,10 +154,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f32e526e61c5455b96c13ec6d0b73276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lightActivated: {r: 0.5254902, g: 1, b: 0.41960785, a: 1}
+  lightDeactivated: {r: 0.99215686, g: 0.49019608, b: 0.49019608, a: 1}
   affectedObjects:
   - {fileID: 6593355232396910668}
   - {fileID: 3372872562055177172}
   - {fileID: 6122124151624851921}
+  spotlight: {fileID: 2152085568180771025}
 --- !u!1 &548925986669564233
 GameObject:
   m_ObjectHideFlags: 0

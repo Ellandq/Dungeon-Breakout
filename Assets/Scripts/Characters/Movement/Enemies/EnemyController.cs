@@ -182,8 +182,8 @@ namespace Characters.Movement.Enemies
             SetPath(startCell, targetCell);
 
             if (_currentPath != null) return;
-            startCell.x++;
-            startCell.y++;
+            targetCell.x++;
+            targetCell.y++;
             SetPath(startCell, targetCell);
         }
 
