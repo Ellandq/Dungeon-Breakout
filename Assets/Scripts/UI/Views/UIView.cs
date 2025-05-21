@@ -7,7 +7,7 @@ namespace UI.Views
         [Header("View Info")] 
         [SerializeField] private UIViews viewType;
         
-        public virtual void ActivateView()
+        public virtual void ActivateView(bool instant = true)
         {
             gameObject.SetActive(true);
         }

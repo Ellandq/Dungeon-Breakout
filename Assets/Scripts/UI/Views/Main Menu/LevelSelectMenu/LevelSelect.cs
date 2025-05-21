@@ -27,9 +27,17 @@ namespace UI.Views.Main_Menu.LevelSelectMenu
             UIManager.ActivateView(UIViews.MainMenu);
         }
 
-        public override void ActivateView()
+        public override void ActivateView(bool instant = true)
         {
             base.ActivateView();
+            var levelIndex = 0;
+            var maxLevelIndex = GameManager.GetCurrentMaxLevel();
+            foreach (var preview in previewButtons)
+            {
+                var lockState = levelIndex > maxLevelIndex;
+                preview.SetLockState(lockState);
+                levelIndex++;
+            }
             if (_lastSetIndex == -1) return;
             continueButton.gameObject.SetActive(false);
             previewButtons[_lastSetIndex].SetHighlight(false);

@@ -1,5 +1,6 @@
 using System.Collections;
 using GameStates;
+using Input;
 using Unity.Collections;
 using UnityEngine;
 
@@ -7,6 +8,9 @@ public class GameManager : ManagerBase<GameManager>
 {
     private IGameState _currentState;
     private int _currentLevelIndex;
+
+    [Header("Save Information")]
+    [SerializeField] private int maxLevelReached;
 
     #if UNITY_EDITOR
         [Header("State Information")]
@@ -17,6 +21,14 @@ public class GameManager : ManagerBase<GameManager>
     private void Start()
     {
         ChangeState(new MainMenuState());
+        
+        InputManager.GetKeyboardInputHandle().AddListenerOnInputAction((state) =>
+        {
+            if (_currentState.Name != "PlayState" 
+                || _currentState.Name == "MainMenuState" 
+                || _currentState.Name == "LoadToMenuState") return;
+            ChangeState(new LoadToMenuState());
+        }, "Escape");
     }
 
     private void Update()
@@ -36,12 +48,18 @@ public class GameManager : ManagerBase<GameManager>
 
     public static void SetLevelIndex(int index)
     {
+        Instance.maxLevelReached = index;
         Instance._currentLevelIndex = index;
     }
 
     public static int GetLevelIndex()
     {
         return Instance._currentLevelIndex;
+    }
+
+    public static int GetCurrentMaxLevel()
+    {
+        return Instance.maxLevelReached;
     }
 
     public void ExitGame()

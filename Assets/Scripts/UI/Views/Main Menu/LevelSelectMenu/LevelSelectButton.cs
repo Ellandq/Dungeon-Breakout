@@ -10,9 +10,16 @@ namespace UI.Views.Main_Menu.LevelSelectMenu
 
         [SerializeField] private Image image;
 
+        [SerializeField] private GameObject lockImage;
+
         public void SetHighlight(bool state)
         {
             image.color = state ? selectedColor : defaultColor;
+        }
+
+        public void SetLockState(bool state)
+        {
+            lockImage.SetActive(state);
         }
     }
 }

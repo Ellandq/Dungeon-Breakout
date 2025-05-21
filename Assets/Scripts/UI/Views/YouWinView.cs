@@ -22,7 +22,7 @@ namespace UI.Views
         [Header("Events")] 
         private Action _onAnyButtonPressed;
 
-        public override void ActivateView()
+        public override void ActivateView(bool instant = true)
         {
             _onAnyButtonPressed = () =>
             {

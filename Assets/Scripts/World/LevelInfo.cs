@@ -44,6 +44,7 @@ namespace World
         public Vector3 PlayerSpawn => playerSpawn;
         public List<EnemyInfo> EnemiesInfo => enemiesInfo;
         public List<CameraInfo> CamerasInfo => camerasInfo;
+        public List<InteractablePanelObject> PanelsInfo => panels;
         
         public void DeinitializeAllCharacters()
         {
@@ -96,6 +97,8 @@ namespace World
 
             enemiesInfo = new List<EnemyInfo>();
             camerasInfo = new List<CameraInfo>();
+            panels = new List<InteractablePanelObject>();
+
 
             if (enemiesParent)
             {

@@ -32,9 +32,9 @@ namespace UI
             }
         }
 
-        public static void ActivateView(UIViews view)
+        public static void ActivateView(UIViews view, bool instant = true)
         {
-            Instance._views[view].ActivateView();
+            Instance._views[view].ActivateView(instant);
         }
         
         public static void DeactivateView(UIViews view)

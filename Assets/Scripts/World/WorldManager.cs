@@ -33,6 +33,13 @@ namespace World
             cameraFollow.Initialize(currentLevelInfo.GetPlayer());
         }
 
+        public void DeLoadLevel()
+        {
+            if (currentLevel == null) return;
+            cameraFollow.Deinitialize();
+            Destroy(currentLevel);
+        }
+
         public void StopAllActors()
         {
             currentLevelInfo.DeinitializeAllCharacters();

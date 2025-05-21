@@ -75,6 +75,20 @@ namespace Editor
                     EditorGUILayout.FloatField("Starting Rotation", cameras[i].startingRotation);
                 }
             }
+            
+            EditorGUILayout.Space();
+
+            // Readonly: Panel Info
+            EditorGUILayout.LabelField("Camera Info", EditorStyles.boldLabel);
+            var panels = levelInfo.PanelsInfo;
+            if (panels != null)
+            {
+                for (var i = 0; i < panels.Count; i++)
+                {
+                    EditorGUILayout.LabelField($"Panel {i + 1}", EditorStyles.miniBoldLabel);
+                    EditorGUILayout.ObjectField("Script", panels[i], typeof(Object), true);
+                }
+            }
 
             GUI.enabled = true;
 
