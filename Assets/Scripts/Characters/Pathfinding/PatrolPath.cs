@@ -12,14 +12,25 @@ namespace Characters.Pathfinding
 
         private int _currentPatrolPoint;
         private bool _reverse;
+        private bool _ignoreNext;
 
         public float GetWaitTime()
         {
             return patrolPointsWaitingTime[_currentPatrolPoint];
         }
 
+        public void IgnoreNextMovement()
+        {
+            _ignoreNext = true;
+        }
+
         public void MoveNext()
         {
+            if (_ignoreNext)
+            {
+                _ignoreNext = !_ignoreNext;
+                return;
+            }
             if (_reverse && _currentPatrolPoint == 0) _reverse = false;
             else if (reverseOnFinish && _currentPatrolPoint == patrolPoints.Count - 1) _reverse = true;
             _currentPatrolPoint += _reverse ? -1 : 1;

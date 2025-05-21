@@ -147,6 +147,7 @@ namespace Characters.Movement.Enemies
                     case EnemyState.Searching:
                         movementType = MovementType.Sprinting;
                         mover.IsMovementEnabled = true;
+                        patrolPath.IgnoreNextMovement();
                         StopAllCoroutines();
                         SetNewPathToPlayer();
                         break;
