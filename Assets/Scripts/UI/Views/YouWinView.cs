@@ -22,13 +22,13 @@ namespace UI.Views
         [Header("Events")] 
         private Action _onAnyButtonPressed;
 
-        public override void ActivateView()
+        public override void ActivateView(bool instant = true)
         {
             _onAnyButtonPressed = () =>
             {
                 UIManager.DeactivateView(UIViews.YouWon);
                 GameManager.SetLevelIndex(GameManager.GetLevelIndex() + 1);
-                GameManager.ChangeState(new GameStartState());
+                GameManager.ChangeState(new GameLoadState());
             };
             
             youWonRectTransform.localScale = Vector3.one * StartingScale;

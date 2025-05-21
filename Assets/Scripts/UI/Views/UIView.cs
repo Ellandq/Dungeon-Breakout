@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UI.Views
 {
@@ -8,14 +7,14 @@ namespace UI.Views
         [Header("View Info")] 
         [SerializeField] private UIViews viewType;
         
-        public virtual void ActivateView()
+        public virtual void ActivateView(bool instant = true)
         {
-            throw new NotImplementedException();
+            gameObject.SetActive(true);
         }
         
         public virtual void DeactivateView()
         {
-            throw new NotImplementedException();
+            gameObject.SetActive(false);
         }
 
         public UIViews GetViewType()

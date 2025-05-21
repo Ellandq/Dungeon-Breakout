@@ -32,9 +32,9 @@ namespace UI
             }
         }
 
-        public static void ActivateView(UIViews view)
+        public static void ActivateView(UIViews view, bool instant = true)
         {
-            Instance._views[view].ActivateView();
+            Instance._views[view].ActivateView(instant);
         }
         
         public static void DeactivateView(UIViews view)
@@ -50,6 +50,11 @@ namespace UI
         public static void DeactivateOverlay(OverlayType type)
         {
             Instance._overlays[type].SetActive(false);
+        }
+
+        public static bool IsViewActive(UIViews type)
+        {
+            return Instance._views[type].gameObject.activeSelf;
         }
     }
 }

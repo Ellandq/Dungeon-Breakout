@@ -21,6 +21,13 @@ namespace Camera
             transform.position = playerPos;
             _isInitialized = true;
         }
+
+        public void Deinitialize()
+        {
+            _isInitialized = false;
+            var position = new Vector3(0, 0, -10);
+            transform.position = position;
+        }
         
         private void LateUpdate()
         {

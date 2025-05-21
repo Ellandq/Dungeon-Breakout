@@ -1,22 +1,26 @@
 ﻿using UI;
+using UI.Overlays;
 using UI.Views;
 using UnityEngine;
-using World;
 
 namespace GameStates
 {
-    public class GameStartState : IGameState
+    public class LoadToMenuState : IGameState
     {
-        public string Name => "GameStartState";
+        public string Name => "LoadToMenu";
         public GameStateStatus Status { get; private set; }
         
         public void Enter()
         {
             Status = GameStateStatus.Entering;
-            var levelIndex = GameManager.GetLevelIndex();
-            WorldManager.Instance.LoadLevel(levelIndex);
-            UIManager.ActivateView(UIViews.Loading);
+            
+            // TIME
             Time.timeScale = 0f;
+            
+            // UI
+            UIManager.ActivateView(UIViews.Loading, false);
+            UIManager.ActivateOverlay(OverlayType.Vignette);
+            
             Status = GameStateStatus.Active;
         }
 
@@ -27,12 +31,14 @@ namespace GameStates
 
         public void Exit()
         {
+            Status = GameStateStatus.Exiting;
             
+            Status = GameStateStatus.Done;
         }
 
         public bool CanExit()
         {
-            return Status == GameStateStatus.Active;
+            return Status == GameStateStatus.Done;
         }
     }
 }

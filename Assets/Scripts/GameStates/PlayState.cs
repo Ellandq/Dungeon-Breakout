@@ -21,12 +21,14 @@ namespace GameStates
 
         public void Exit()
         {
+            Status = GameStateStatus.Exiting;
             
+            Status = GameStateStatus.Done;
         }
 
         public bool CanExit()
         {
-            return true;
+            return Status == GameStateStatus.Done;
         }
     }
 }
