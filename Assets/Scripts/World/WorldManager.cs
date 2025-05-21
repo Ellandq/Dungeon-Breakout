@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Camera;
+using GameStates;
 using UnityEngine;
 
 namespace World
@@ -24,6 +25,8 @@ namespace World
             if (levelIndex >= mapPrefabs.Count)
             {
                 Debug.LogWarning($"There is no level with index: ${levelIndex}");
+                GameManager.SetLevelIndex(levelIndex - 1);
+                GameManager.ChangeState(new LoadToMenuState());
                 return;
             }
             if (currentLevel) Destroy(currentLevel);
