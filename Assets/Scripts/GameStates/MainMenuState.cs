@@ -1,4 +1,8 @@
-﻿namespace GameStates
+﻿using UI;
+using UI.Overlays;
+using UI.Views;
+
+namespace GameStates
 {
     public class MainMenuState : IGameState
     {
@@ -8,6 +12,11 @@
         public void Enter()
         {
             Status = GameStateStatus.Entering;
+            
+            // UI
+            UIManager.DeactivateOverlay(OverlayType.Vignette);
+            UIManager.ActivateView(UIViews.MainMenu);
+            
             Status = GameStateStatus.Active;
         }
 
@@ -18,12 +27,15 @@
 
         public void Exit()
         {
-            
+            Status = GameStateStatus.Exiting;
+            UIManager.DeactivateView(UIViews.MainMenu);
+            UIManager.DeactivateView(UIViews.LevelSelect);
+            Status = GameStateStatus.Done;
         }
 
         public bool CanExit()
         {
-            return true;
+            return Status == GameStateStatus.Done;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace UI.Views
             {
                 UIManager.DeactivateView(UIViews.YouWon);
                 GameManager.SetLevelIndex(GameManager.GetLevelIndex() + 1);
-                GameManager.ChangeState(new GameStartState());
+                GameManager.ChangeState(new GameLoadState());
             };
             
             youWonRectTransform.localScale = Vector3.one * StartingScale;

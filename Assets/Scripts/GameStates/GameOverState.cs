@@ -11,7 +11,10 @@ namespace GameStates
         public void Enter()
         {
             Status = GameStateStatus.Entering;
+            
+            // UI
             UIManager.ActivateView(UIViews.GameOver);
+            
             Status = GameStateStatus.Active;
         }
 
@@ -22,12 +25,14 @@ namespace GameStates
 
         public void Exit()
         {
+            Status = GameStateStatus.Exiting;
             UIManager.DeactivateView(UIViews.GameOver);
+            Status = GameStateStatus.Done;
         }
 
         public bool CanExit()
         {
-            return true;
+            return Status == GameStateStatus.Done;
         }
     }
 }

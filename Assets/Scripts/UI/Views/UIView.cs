@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UI.Views
 {
@@ -10,12 +9,12 @@ namespace UI.Views
         
         public virtual void ActivateView()
         {
-            throw new NotImplementedException();
+            gameObject.SetActive(true);
         }
         
         public virtual void DeactivateView()
         {
-            throw new NotImplementedException();
+            gameObject.SetActive(false);
         }
 
         public UIViews GetViewType()

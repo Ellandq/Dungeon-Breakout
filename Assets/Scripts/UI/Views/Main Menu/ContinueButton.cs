@@ -17,7 +17,7 @@ namespace UI.Views.Main_Menu
             var button = GetComponent<Button>();
             button.onClick.AddListener(() =>
             {
-                mainMenuView.DeactivateView();
+                GameManager.ChangeState(new GameLoadState());
             });
         }
         

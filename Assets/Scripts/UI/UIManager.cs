@@ -51,5 +51,10 @@ namespace UI
         {
             Instance._overlays[type].SetActive(false);
         }
+
+        public static bool IsViewActive(UIViews type)
+        {
+            return Instance._views[type].gameObject.activeSelf;
+        }
     }
 }

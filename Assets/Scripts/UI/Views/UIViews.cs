@@ -4,6 +4,8 @@
     {
         GameOver,
         Loading,
-        YouWon
+        YouWon,
+        MainMenu,
+        LevelSelect
     }
 }

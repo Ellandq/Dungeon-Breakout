@@ -44,6 +44,11 @@ public class GameManager : ManagerBase<GameManager>
         return Instance._currentLevelIndex;
     }
 
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
     private IEnumerator TransitionTo(IGameState nextState)
     {
         if (_currentState != null)

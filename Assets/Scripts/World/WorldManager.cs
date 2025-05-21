@@ -54,5 +54,10 @@ namespace World
         {
             _onCameraAlert += actionToAdd;
         }
+
+        public int GetLevelCount()
+        {
+            return mapPrefabs.Count;
+        }
     }
 }
