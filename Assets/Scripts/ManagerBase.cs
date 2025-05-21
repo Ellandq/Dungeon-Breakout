@@ -22,14 +22,20 @@ public abstract class ManagerBase<T> : MonoBehaviour where T : MonoBehaviour
 
     protected virtual void Awake()
     {
-        if (_instance == null)
-        {
-            _instance = this as T;
-        }
-        else if (_instance != this)
-        {
-            Debug.LogWarning($"{typeof(T)} instance already exists. Destroying duplicate.");
-            Destroy(gameObject);
-        }
+        _instance = this as T;
+        // if (_instance == null)
+        // {
+        //     _instance = this as T;
+        // }
+        // else if (_instance != this)
+        // {
+        //     Debug.LogWarning($"{typeof(T)} instance already exists. Destroying duplicate.");
+        //     Destroy(gameObject);
+        // }
+    }
+    
+    private void OnDestroy()
+    {
+        _instance = null;
     }
 }

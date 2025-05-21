@@ -59,7 +59,7 @@ MonoBehaviour:
   - enemy: {fileID: 3703560787438337244}
     enemySpawn: {x: 9, y: 5, z: 0}
   - enemy: {fileID: 3851688567327957966}
-    enemySpawn: {x: -5, y: -7, z: 0}
+    enemySpawn: {x: -5, y: 6, z: 0}
   - enemy: {fileID: 976046802074750282}
     enemySpawn: {x: 18, y: -13, z: 0}
   camerasInfo:

@@ -38,7 +38,7 @@ namespace World
 
         public void DeLoadLevel()
         {
-            if (currentLevel == null) return;
+            if (currentLevel) return;
             cameraFollow.Deinitialize();
             Destroy(currentLevel);
         }

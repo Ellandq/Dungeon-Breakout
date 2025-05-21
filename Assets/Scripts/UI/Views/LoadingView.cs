@@ -131,6 +131,7 @@ namespace UI.Views
 
                 yield return null;
             }
+            
             WorldManager.Instance.DeLoadLevel();
             StartCoroutine(LoadingFinishAnimation());
         }

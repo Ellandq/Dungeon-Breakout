@@ -101,7 +101,7 @@ namespace Characters
             localPoints3D.AddRange(localPoints.Select(p => new Vector3(p.x, p.y, 0f)));
             localPoints3D.Add(Vector3.zero);
 
-            if (_flashlight != null)
+            if (_flashlight)
                 _flashlight.SetShapePath(localPoints3D.ToArray());
 
             DetectTargets(worldPoints);
