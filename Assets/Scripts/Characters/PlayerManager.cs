@@ -6,7 +6,7 @@ namespace Characters
     {
         [Header("Player Reference")] 
         [SerializeField] private Player player;
-
+        
         public static Player GetPlayer()
         {
             return Instance.player;

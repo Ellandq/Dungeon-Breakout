@@ -26,6 +26,7 @@ namespace Characters.Movement.Camera
 
         public override void Initialize()
         {
+            playerTransform = PlayerManager.GetPlayer().transform;
             base.Initialize();
             StopAllCoroutines();
             visionCone.Initialize(PlayerFound, PlayerLost);

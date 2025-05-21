@@ -31,6 +31,7 @@ namespace Characters.Movement.Enemies
         
         public override void Initialize()
         {
+            player = PlayerManager.GetPlayer();
             WorldManager.Instance.SubscribeToOnCameraAlert((() => ChangeState(EnemyState.Searching)));
             _freshInitialization = true;
             base.Initialize();
