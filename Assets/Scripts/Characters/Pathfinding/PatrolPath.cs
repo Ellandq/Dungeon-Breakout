@@ -51,6 +51,7 @@ namespace Characters.Pathfinding
         {
             _currentPatrolPoint = 0;
             _reverse = false;
+            _ignoreNext = false;
         }
     }
 }
