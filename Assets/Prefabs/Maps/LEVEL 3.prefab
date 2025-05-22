@@ -59,7 +59,7 @@ MonoBehaviour:
   - enemy: {fileID: 3703560787438337244}
     enemySpawn: {x: 9, y: 5, z: 0}
   - enemy: {fileID: 3851688567327957966}
-    enemySpawn: {x: -5, y: 6, z: 0}
+    enemySpawn: {x: -5, y: -7, z: 0}
   - enemy: {fileID: 976046802074750282}
     enemySpawn: {x: 18, y: -13, z: 0}
   camerasInfo:
@@ -18135,7 +18135,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 865184293281248082, guid: 7bad666bf3ef0f34894ffdd2c18954c9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 865184293281248082, guid: 7bad666bf3ef0f34894ffdd2c18954c9, type: 3}
       propertyPath: m_LocalPosition.z
